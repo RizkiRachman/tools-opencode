@@ -444,6 +444,7 @@ All skills at `skills/` (symlinked into the OpenCode config dir). Use `/skill <n
 | `impeccable` | Design director — critique, audit, polish UI; offline slop detector; required before UI tasks are marked done |
 | `design-taste-frontend` | Art direction for frontend builds — design brief, tokens, browser self-check loop |
 | `diagram-design` | 45+ branded HTML/SVG diagram types (architecture, flows, ER, journeys, deployment); Mermaid/drawio/excalidraw import |
+| `awesome-readme` | README/docs standard — badges, TOC, quick start, config tables, architecture notes (distilled from matiassingers/awesome-readme) |
 | `lean-ctx-{exploring,impact,debug,refactor,cli,guide}` | lean-ctx-specific workflows |
 
 *Last updated: 2026-10-29. If you modify conventions, workflows, or config, update this file.*

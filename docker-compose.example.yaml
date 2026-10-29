@@ -1,0 +1,43 @@
+services:
+  opencode:
+    container_name: opencode
+    labels:
+      bpg.group: infra
+      bpg.type: agents
+    build:
+      context: ./opencode
+      args:
+        OPENCODE_VERSION: "latest"  # or "1.19.0" if you want to pin
+        GRAPHIFY_VERSION: "0.8.49"
+        LEAN_CTX_VERSION: "3.10.2"  # Added missing arg
+        CONTEXT7_VERSION: "4.4.1"
+    init: true
+    mem_limit: 3g
+    cpus: 2
+    ports:
+      - "127.0.0.1:4096:4096"
+    restart: unless-stopped
+    environment:
+      LANG: C.UTF-8
+      LC_ALL: C.UTF-8
+      TERM: xterm-256color
+      OPENCODE_API_KEY: ${OPENCODE_API_KEY:-REPLACE_ME}
+      OPENCODE_AUTH_REQUIRED: "true"
+      OPENCODE_CONFIG: /home/node/.config/opencode/opencode.json
+      SUMOPOD_API_KEY: ${SUMOPOD_API_KEY:-REPLACE_ME}
+      SUMOPOD_BASE_URL: ${SUMOPOD_BASE_URL:-REPLACE_ME}
+      SUMOPOD_BASE_MODEL: ${SUMOPOD_BASE_MODEL:-REPLACE_ME}
+      SUMOPOD_BASE_MODEL_NAME: ${SUMOPOD_BASE_MODEL_NAME:-REPLACE_ME}
+      CONTEXT7_API_KEY: ${CONTEXT7_API_KEY:-REPLACE_ME}
+      # Graphify disabled but config preserved
+      GRAPHIFY_ROOT: /home/node/workspace
+      GRAPHIFY_BUILD: if-missing
+      GRAPHIFY_TIMEOUT: "900"
+    volumes:
+      - .:/home/node/workspace
+      - ./opencode/config/opencode.json:/home/node/.config/opencode/opencode.json:ro
+      - ./opencode/config/opencode-model-fallback.json:/home/node/.config/opencode/opencode-model-fallback.json:ro
+      - opencode-data:/home/node/.local/share/opencode
+
+volumes:
+  opencode-data:

@@ -27,6 +27,6 @@
   "timeout_seconds": 60,
   "notify_on_fallback": true,
   "fallback_models": [
-    "sumopod/deepseek-v4-flash"
+    "sumopod/deepseek-flash"
   ]
 }

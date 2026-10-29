@@ -106,6 +106,7 @@ Scan available skills. Load matching ones via `/skill`:
 - `/skill qa-expert` — test strategy, coverage, edge cases
 - `/skill token-optimize` — efficient reading patterns
 - `/skill humanizer` — remove AI writing patterns from output text
+- `/skill awesome-readme` — write or restructure README/docs following the awesome-readme standard (required before marking README work done)
 - `/skill executing-plans` — execute implementation plans with checkpoints
 - `/skill subagent-driven-development` — multi-agent code + review
 - `/skill design-taste-frontend` — art direction + browser self-check loop when the task creates or modifies UI (pages, components, dashboards)
