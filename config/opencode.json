@@ -1,0 +1,525 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "share": "disabled",
+  "autoupdate": false,
+  "model": "sumopod/glm-5.3-flash",
+  "small_model": "sumopod/glm-5.3-flash",
+  "default_agent": "build",
+  "lsp": false,
+  "snapshot": false,
+  "watcher": {
+    "ignore": [
+      "**/node_modules/**",
+      "**/.runtime/**",
+      "**/target/**",
+      "**/logs/**",
+      "**/.git/**",
+      "**/graphify-out/**"
+    ]
+  },
+  "provider": {
+    "sumopod": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "SumoPod",
+      "options": {
+        "baseURL": "{env:SUMOPOD_BASE_URL}",
+        "apiKey": "{env:SUMOPOD_API_KEY}"
+      },
+      "models": {
+        "deepseek-flash": {
+          "name": "DeepSeek Flash"
+        },
+        "glm-5.3-flash": {
+          "name": "GLM 5.3 Flash"
+        }
+      }
+    }
+  },
+  "instructions": [
+    "/opt/engine/agent.md"
+  ],
+  "plugin": [
+    "file:///home/node/.config/opencode/node_modules/@razroo/opencode-model-fallback/dist/index.js",
+    "file:///home/node/.config/opencode/node_modules/@tarquinen/opencode-dcp/dist/index.js",
+    "file:///home/node/.config/opencode/node_modules/opencode-websearch-cited/dist/index.js"
+  ],
+  "compaction": {
+    "auto": true,
+    "prune": false,
+    "reserved": 20000
+  },
+  "permission": {
+    "*": "allow",
+    "lean-ctx_*": "allow"
+  },
+  "agent": {
+    "build": {
+      "model": "opencode/big-pickle",
+      "fallback_models": [],
+      "max_tokens": 32000,
+      "mode": "primary"
+    },
+    "tech-lead": {
+      "description": "Scrum team lead and primary orchestrator — delegates to the team, runs the scoring pipeline, drives the state machine.",
+      "mode": "primary",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 4096,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 50,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "deny",
+        "grep": "deny",
+        "glob": "deny",
+        "list": "deny",
+        "write": "deny",
+        "webfetch": "deny",
+        "lean-ctx_*": "allow",
+        "context7_*": "allow",
+        "memory_*": "allow"
+      }
+    },
+    "product-manager": {
+      "description": "Owns requirements and the acceptance-criteria backlog. Turns user intent into testable Given-When-Then criteria. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/deepseek-flash",
+      "fallback_models": [],
+      "max_tokens": 8192,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 40,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "scrum-master": {
+      "description": "Process owner. Guards the contract, state machine, and workflow on every transition; unblocks BLOCKED sessions and drives retros. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/deepseek-flash",
+      "fallback_models": [],
+      "max_tokens": 4096,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 40,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "system-analyst": {
+      "description": "Analyzes requests, traces impact across the codebase, identifies edge cases, and produces a structured implementation plan or GWT spec.",
+      "mode": "subagent",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 16384,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 80,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "software-architect": {
+      "description": "Strategic architecture advisor and independent design reviewer — trade-offs, system-level debugging, YAGNI enforcement. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 8192,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 60,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "developer": {
+      "description": "Implements the plan task by task following project conventions, writing tests alongside code.",
+      "mode": "subagent",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 16384,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 100,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "allow",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "allow",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "devops-engineer": {
+      "description": "Builds and validates CI/CD, containerization, deployment, migrations, observability, and rollback plans. Read/write within scope.",
+      "mode": "subagent",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 12288,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 60,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "allow",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "allow",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "quality-analyst": {
+      "description": "Independent quality reviewer — code quality, edge cases, tests, performance, and DB/DevOps operability. Cross-model reviewer. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/deepseek-flash",
+      "fallback_models": [],
+      "max_tokens": 12288,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 80,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "security-engineer": {
+      "description": "Independent security reviewer — threat modeling, vulnerability assessment, secrets/trust-boundary review. Cross-model reviewer. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/deepseek-flash",
+      "fallback_models": [],
+      "max_tokens": 8192,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 60,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "explorer": {
+      "description": "Codebase search specialist for discovering unknowns. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 4096,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 30,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "librarian": {
+      "description": "External documentation and library research specialist. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 4096,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 30,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow",
+        "graphify_*": "deny"
+      }
+    },
+    "council": {
+      "description": "Multi-model consensus engine for high-stakes decisions and cross-model enforcement. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 8192,
+      "temperature": 0.2,
+      "top_p": 1,
+      "steps": 30,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "observer": {
+      "description": "Visual analysis specialist for images, PDFs, and diagrams. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 4096,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 30,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "fixer": {
+      "description": "Fast implementation specialist for well-defined bounded tasks and review fixes. Scoped edits only.",
+      "mode": "subagent",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 8192,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 40,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "allow",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "allow",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow",
+        "graphify_*": "deny"
+      }
+    },
+    "learner": {
+      "description": "Post-execution retro facilitator. Extracts lessons, patterns, and gotchas after completion to make the system smarter. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 4096,
+      "temperature": 0.3,
+      "top_p": 1,
+      "steps": 40,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "plan": {
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 8192
+    },
+    "general": {
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 16384
+    },
+    "explore": {
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 4096
+    }
+  },
+  "mcp": {
+    "lean-ctx": {
+      "type": "local",
+      "command": [
+        "lean-ctx"
+      ],
+      "enabled": true,
+      "environment": {
+        "LEAN_CTX_DATA_DIR": "/home/node/.local/share/opencode/lean-ctx"
+      }
+    },
+    "graphify": {
+      "type": "local",
+      "command": [
+        "sh",
+        "-c",
+        "exec graphify-mcp --graph \"${GRAPHIFY_GRAPH:-${GRAPHIFY_ROOT:-/home/node/workspace}/graphify-out/graph.json}\""
+      ],
+      "enabled": false,
+      "environment": {
+        "OPENAI_API_KEY": "{env:SUMOPOD_API_KEY}",
+        "OPENAI_BASE_URL": "{env:SUMOPOD_BASE_URL}"
+      }
+    },
+    "context7": {
+      "type": "local",
+      "command": [
+        "context7-mcp"
+      ],
+      "enabled": true,
+      "environment": {
+        "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
+      }
+    },
+    "memory": {
+      "type": "local",
+      "command": [
+        "mcp-server-memory"
+      ],
+      "enabled": true
+    },
+    "fetch": {
+      "type": "local",
+      "command": [
+        "mcp-server-fetch"
+      ],
+      "enabled": true
+    },
+    "everything": {
+      "type": "local",
+      "command": [
+        "mcp-server-everything"
+      ],
+      "enabled": true
+    }
+  }
+}

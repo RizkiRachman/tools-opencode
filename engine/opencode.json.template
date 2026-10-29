@@ -1,0 +1,408 @@
+{
+  "$schema": "https://opencode.ai/config.json",
+  "share": "disabled",
+  "autoupdate": false,
+  "model": "opencode/big-pickle",
+  "small_model": "opencode/big-pickle",
+  "lsp": false,
+  "snapshot": false,
+  "watcher": {
+    "ignore": [
+      "**/node_modules/**",
+      "**/.runtime/**",
+      "**/target/**",
+      "**/logs/**",
+      "**/.git/**",
+      "**/graphify-out/**"
+    ]
+  },
+  "provider": {
+    "sumopod": {
+      "npm": "@ai-sdk/openai-compatible",
+      "name": "SumoPod",
+      "options": {
+        "baseURL": "{env:SUMOPOD_BASE_URL}",
+        "apiKey": "{env:SUMOPOD_API_KEY}"
+      },
+      "models": {
+        "deepseek-v4-flash": {
+          "name": "DeepSeek V4 Flash"
+        }
+      }
+    }
+  },
+  "instructions": [
+    "/opt/engine/agent.md"
+  ],
+  "plugin": [
+    "file:///home/node/.config/opencode/node_modules/@razroo/opencode-model-fallback/dist/index.js",
+    "file:///home/node/.config/opencode/node_modules/@tarquinen/opencode-dcp/dist/index.js",
+    "file:///home/node/.config/opencode/node_modules/opencode-websearch-cited/dist/index.js"
+  ],
+  "compaction": {
+    "auto": true,
+    "prune": false,
+    "reserved": 20000
+  },
+  "permission": {
+    "*": "allow",
+    "lean-ctx_*": "allow"
+  },
+  "agent": {
+    "build": {
+      "model": "opencode/big-pickle",
+      "fallback_models": [
+        "{env:SUMOPOD_BASE_MODEL}"
+      ],
+      "mode": "primary"
+    },
+    "tech-lead": {
+      "model": "opencode/big-pickle",
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 50,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "read": "deny",
+        "edit": "deny",
+        "grep": "deny",
+        "bash": "deny",
+        "snip": "deny",
+        "skill": "allow"
+      }
+    },
+    "system-analyst": {
+      "model": "opencode/big-pickle",
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 80,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "skill": "allow",
+        "task": {
+          "*": "deny"
+        },
+        "question": "deny",
+        "webfetch": "deny",
+        "ctx_refactor": "deny",
+        "write": "deny",
+        "glob": "allow",
+        "list": "allow",
+        "read": "allow",
+        "edit": "deny",
+        "grep": "allow",
+        "bash": "deny",
+        "snip": "deny",
+        "memory_*": "allow",
+        "context7_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "developer": {
+      "model": "opencode/big-pickle",
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 100,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "skill": "allow",
+        "memory_*": "allow",
+        "read": "allow",
+        "edit": "allow",
+        "grep": "allow",
+        "bash": "deny",
+        "snip": "deny",
+        "context7_*": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "lean-ctx_*": "allow",
+        "write": "allow"
+      }
+    },
+    "quality-analyst": {
+      "model": "opencode/big-pickle",
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 80,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "skill": "allow",
+        "task": {
+          "*": "deny"
+        },
+        "question": "deny",
+        "webfetch": "deny",
+        "ctx_refactor": "deny",
+        "write": "deny",
+        "glob": "allow",
+        "list": "allow",
+        "memory_*": "allow",
+        "context7_*": "allow",
+        "read": "allow",
+        "edit": "deny",
+        "grep": "allow",
+        "bash": "deny",
+        "snip": "deny",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "explorer": {
+      "model": "opencode/big-pickle",
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 30,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "skill": "allow",
+        "task": {
+          "*": "deny"
+        },
+        "question": "deny",
+        "webfetch": "deny",
+        "ctx_refactor": "deny",
+        "write": "deny",
+        "glob": "allow",
+        "list": "allow",
+        "grep": "allow",
+        "memory_*": "allow",
+        "context7_*": "allow",
+        "read": "allow",
+        "edit": "deny",
+        "bash": "deny",
+        "snip": "deny",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "librarian": {
+      "model": "opencode/big-pickle",
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 30,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "skill": "allow",
+        "task": {
+          "*": "deny"
+        },
+        "question": "deny",
+        "webfetch": "deny",
+        "write": "deny",
+        "glob": "allow",
+        "list": "allow",
+        "memory_*": "allow",
+        "graphify_*": "deny",
+        "ctx_*": "deny",
+        "read": "allow",
+        "edit": "deny",
+        "grep": "allow",
+        "bash": "deny",
+        "snip": "deny",
+        "lean-ctx_*": "allow",
+        "context7_*": "allow"
+      }
+    },
+    "software-architect": {
+      "model": "opencode/big-pickle",
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 60,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "skill": "allow",
+        "task": {
+          "*": "deny"
+        },
+        "question": "deny",
+        "webfetch": "deny",
+        "ctx_refactor": "deny",
+        "write": "deny",
+        "glob": "allow",
+        "list": "allow",
+        "memory_*": "allow",
+        "context7_*": "allow",
+        "read": "allow",
+        "edit": "deny",
+        "grep": "allow",
+        "bash": "deny",
+        "snip": "deny",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "fixer": {
+      "model": "opencode/big-pickle",
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 40,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "skill": "allow",
+        "memory_*": "allow",
+        "context7_*": "allow",
+        "graphify_*": "deny",
+        "read": "allow",
+        "edit": "allow",
+        "grep": "allow",
+        "bash": "deny",
+        "snip": "deny",
+        "task": {
+          "*": "deny"
+        },
+        "glob": "allow",
+        "list": "allow",
+        "lean-ctx_*": "allow",
+        "write": "allow"
+      }
+    },
+    "learner": {
+      "model": "opencode/big-pickle",
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 40,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "skill": "allow",
+        "task": {
+          "*": "deny"
+        },
+        "question": "deny",
+        "webfetch": "deny",
+        "ctx_refactor": "deny",
+        "write": "deny",
+        "glob": "allow",
+        "list": "allow",
+        "memory_*": "allow",
+        "context7_*": "allow",
+        "read": "allow",
+        "edit": "deny",
+        "grep": "allow",
+        "bash": "deny",
+        "snip": "deny",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "observer": {
+      "model": "opencode/big-pickle",
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 30,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "skill": "allow",
+        "task": {
+          "*": "deny"
+        },
+        "question": "deny",
+        "webfetch": "deny",
+        "ctx_refactor": "deny",
+        "write": "deny",
+        "glob": "allow",
+        "list": "allow",
+        "memory_*": "allow",
+        "context7_*": "allow",
+        "ctx_*": "deny",
+        "read": "allow",
+        "edit": "deny",
+        "grep": "allow",
+        "bash": "deny",
+        "snip": "deny",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "council": {
+      "model": "opencode/big-pickle",
+      "temperature": 0.2,
+      "top_p": 1,
+      "steps": 30,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "skill": "allow",
+        "task": {
+          "*": "deny"
+        },
+        "question": "deny",
+        "webfetch": "deny",
+        "ctx_refactor": "deny",
+        "write": "deny",
+        "glob": "allow",
+        "list": "allow",
+        "memory_*": "allow",
+        "context7_*": "allow",
+        "read": "allow",
+        "edit": "deny",
+        "grep": "allow",
+        "bash": "deny",
+        "snip": "deny",
+        "lean-ctx_*": "allow"
+      }
+    }
+  },
+  "mcp": {
+    "lean-ctx": {
+      "type": "local",
+      "command": [
+        "lean-ctx"
+      ],
+      "enabled": true,
+      "environment": {
+        "LEAN_CTX_DATA_DIR": "/home/node/.local/share/opencode/lean-ctx"
+      }
+    },
+    "graphify": {
+      "type": "local",
+      "command": [
+        "sh",
+        "-c",
+        "exec graphify-mcp --graph \"${GRAPHIFY_GRAPH:-${GRAPHIFY_ROOT:-/home/node/workspace}/graphify-out/graph.json}\""
+      ],
+      "enabled": false,
+      "environment": {
+        "OPENAI_API_KEY": "{env:SUMOPOD_API_KEY}",
+        "OPENAI_BASE_URL": "{env:SUMOPOD_BASE_URL}",
+        "OPENAI_MODEL": "{env:SUMOPOD_BASE_MODEL_NAME}"
+      }
+    },
+    "context7": {
+      "type": "local",
+      "command": [
+        "context7-mcp"
+      ],
+      "enabled": true,
+      "environment": {
+        "CONTEXT7_API_KEY": "{env:CONTEXT7_API_KEY}"
+      }
+    },
+    "memory": {
+      "type": "local",
+      "command": [
+        "mcp-server-memory"
+      ],
+      "enabled": true
+    },
+    "fetch": {
+      "type": "local",
+      "command": [
+        "mcp-server-fetch"
+      ],
+      "enabled": true
+    },
+    "everything": {
+      "type": "local",
+      "command": [
+        "mcp-server-everything"
+      ],
+      "enabled": false
+    }
+  },
+  "default_agent": "build"
+}
