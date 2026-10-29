@@ -110,6 +110,8 @@ RUN set -eux; \
       /home/node/.config/opencode/agents; \
     ln -sfn /opt/engine/skills \
       /home/node/.config/opencode/skills; \
+    ln -sfn /opt/engine/commands \
+      /home/node/.config/opencode/command; \
     ln -sfn /opt/engine/rules \
       /home/node/.config/opencode/rules; \
     ln -sfn /opt/engine/contract \
