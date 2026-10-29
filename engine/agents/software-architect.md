@@ -117,6 +117,7 @@ Scan available skills. Load matching ones via `/skill`:
 - `/skill systematic-debugging` — structured root cause analysis
 - `/skill brainstorming` — design exploration with structured alternatives
 - `/skill humanizer` — remove AI writing patterns from analysis output
+- `/skill diagram-design` — produce architecture trade-off and component-interaction diagrams when reviewing plans
 
 If unsure, load it — redundant loading costs tokens, missing guidance costs wrong decisions.
 

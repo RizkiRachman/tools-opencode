@@ -113,6 +113,7 @@ Scan the available skills list at session start. Load matching skills via `/skil
 - `/skill writing-plans` — create detailed implementation plans with bite-sized TDD tasks
 - `/skill brainstorming` — explore design alternatives before planning
 - `/skill doubt-driven-development` — subject non-trivial design decisions to adversarial review before they stand (anti-rationalization tables)
+- `/skill diagram-design` — attach architecture, impact, or data-flow diagrams to any plan spanning >3 files or crossing services (PLAN gate)
 - `/skill spec-driven-development` — create GWT-format specs when orchestrator sets mode=spec
 - `/skill humanizer` — remove AI writing patterns from plan output
 

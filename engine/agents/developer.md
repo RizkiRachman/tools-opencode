@@ -108,6 +108,8 @@ Scan available skills. Load matching ones via `/skill`:
 - `/skill humanizer` — remove AI writing patterns from output text
 - `/skill executing-plans` — execute implementation plans with checkpoints
 - `/skill subagent-driven-development` — multi-agent code + review
+- `/skill design-taste-frontend` — art direction + browser self-check loop when the task creates or modifies UI (pages, components, dashboards)
+- `/skill impeccable` — run the impeccable detector and /fix before marking any UI task done (EXECUTE exit gate)
 - `/skill test-driven-development` — TDD red/green/refactor cycle
 - `/skill spec-driven-development` — read and implement from GWT-format specs
 - `/skill doubt-driven-development` — doubt your own code before committing (anti-rationalization)

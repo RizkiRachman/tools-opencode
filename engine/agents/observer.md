@@ -86,6 +86,8 @@ If found → extract `requirements.goal`, `scope.included`, `scope.excluded`. If
 Scan available skills. If any skill matches the visual analysis domain, load it via `/skill`. If unsure, load it anyway — missing guidance wastes more tokens than a redundant load.
 - `/skill system-analyst` — interpreting diagrams and architecture documentation
 - `/skill humanizer` — remove AI writing patterns from analysis output
+- `/skill impeccable` — design critique vocabulary (hierarchy, typography, spacing) when reviewing UI screenshots
+- `/skill diagram-design` — rendering conventions (HTML/SVG structure) when analyzing generated diagrams
 
 ## When to Use
 - Reading images, screenshots, mockups, diagrams embedded in the codebase

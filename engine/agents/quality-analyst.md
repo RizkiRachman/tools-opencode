@@ -111,6 +111,7 @@ Scan available skills. Load matching ones via `/skill`:
 - `/skill software-developer` — overall code quality lense
 - `/skill code-review-and-quality` — 5-axis review framework (correctness, readability, architecture, security, performance)
 - `/skill doubt-driven-development` — cross-examine your own findings before reporting
+- `/skill impeccable` — design-lens: run the impeccable slop detector on UI diffs as part of the readability axis (REVIEW gate)
 - `/skill requesting-code-review` — review submission guidelines
 - `/skill receiving-code-review` — handling review feedback
 - `/skill humanizer` — remove AI writing patterns from review output
@@ -294,6 +295,7 @@ If review is on receiving end: load `/skill receiving-code-review` — requires 
 /skill qa-expert
 /skill security-expert
 /skill devops-expert
+/skill impeccable
 ```
 
 ### MCP Verification

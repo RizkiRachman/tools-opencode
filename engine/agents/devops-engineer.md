@@ -79,6 +79,7 @@ lean-ctx ctx_knowledge recall --key "orchestration-contract" --mode "exact"
 - `/skill security-expert` — secret handling, least privilege
 - `/skill software-developer` — config-as-code conventions
 - `/skill humanizer` — remove AI writing patterns from runbooks
+- `/skill diagram-design` — deployment, pipeline, and dependency-graph diagrams for infra plans and runbooks
 - Any skill matching the current domain (e.g. `spring-boot-*`, `postgres-*`)
 
 ### 4. Pre-Edit Safety (write-capable)

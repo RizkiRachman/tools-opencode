@@ -83,6 +83,7 @@ lean-ctx ctx_knowledge recall --key "orchestration-contract" --mode "exact"
 - `/skill brainstorming` — explore the option space before converging
 - `/skill writing-plans` — structure the backlog into an actionable plan
 - `/skill humanizer` — remove AI writing patterns from acceptance criteria
+- `/skill diagram-design` — visualize user journeys, story maps, and process flows when requirements span multiple actors or phases
 - Any skill matching the current domain
 
 If unsure, load it — missing guidance costs rework.

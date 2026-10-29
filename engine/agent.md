@@ -135,23 +135,23 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
-| **product-manager** | Requirements + acceptance-criteria backlog (GWT) | lean-ctx, context7 | Read-only | `INIT`, `PLAN` | reviewer | business-analyst, brainstorming, writing-plans | `agents/product-manager.md` |
-| **system-analyst** | Impact analysis, specs, detailed plans | lean-ctx, graphify | Read-only | `INIT`, `PLAN`, `PLAN_SCORED` | executor | system-analyst, business-analyst, writing-plans | `agents/system-analyst.md` |
-| **software-architect** | Architecture trade-offs, tech-debt assessment | lean-ctx, graphify | Read-only | `INIT`, `PLAN`, `PLAN_SCORED`, `REVIEW` | reviewer | system-analyst, java-developer | `agents/software-architect.md` |
+| **product-manager** | Requirements + acceptance-criteria backlog (GWT) | lean-ctx, context7 | Read-only | `INIT`, `PLAN` | reviewer | business-analyst, brainstorming, writing-plans, diagram-design | `agents/product-manager.md` |
+| **system-analyst** | Impact analysis, specs, detailed plans | lean-ctx, graphify | Read-only | `INIT`, `PLAN`, `PLAN_SCORED` | executor | system-analyst, business-analyst, writing-plans, diagram-design | `agents/system-analyst.md` |
+| **software-architect** | Architecture trade-offs, tech-debt assessment | lean-ctx, graphify | Read-only | `INIT`, `PLAN`, `PLAN_SCORED`, `REVIEW` | reviewer | system-analyst, java-developer, diagram-design | `agents/software-architect.md` |
 
 ### Implementation Agents (read/write)
 
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
-| **developer** | Implements the plan, writes tests alongside code | lean-ctx | Read/write | `EXECUTE`, `EXECUTE_SCORED` | executor | test-driven-development, software-developer | `agents/developer.md` |
-| **devops-engineer** | CI/CD, containerization, deploy, migrations, observability, rollback | lean-ctx | Read/write | `EXECUTE`, `EXECUTE_SCORED`, `REVIEW` | executor | devops-expert, observability-and-instrumentation | `agents/devops-engineer.md` |
+| **developer** | Implements the plan, writes tests alongside code | lean-ctx | Read/write | `EXECUTE`, `EXECUTE_SCORED` | executor | test-driven-development, software-developer, design-taste-frontend, impeccable | `agents/developer.md` |
+| **devops-engineer** | CI/CD, containerization, deploy, migrations, observability, rollback | lean-ctx | Read/write | `EXECUTE`, `EXECUTE_SCORED`, `REVIEW` | executor | devops-expert, observability-and-instrumentation, diagram-design | `agents/devops-engineer.md` |
 | **fixer** | Bounded, scoped fixes for well-defined tasks | lean-ctx | Read/write | `EXECUTE` | executor | systematic-debugging | `agents/fixer.md` |
 
 ### Quality & Process Agents (read-only)
 
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
-| **quality-analyst** | Independent quality review (5-axis: correctness, readability, architecture, security, performance) | lean-ctx, postgres | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | qa-expert, security-expert, code-review-and-quality | `agents/quality-analyst.md` |
+| **quality-analyst** | Independent quality review (5-axis: correctness, readability, architecture, security, performance) | lean-ctx, postgres | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | qa-expert, security-expert, code-review-and-quality, impeccable | `agents/quality-analyst.md` |
 | **security-engineer** | Independent security review — threat model, vulns, secrets, trust boundaries | lean-ctx | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | security-expert, code-review-and-quality | `agents/security-engineer.md` |
 | **scrum-master** | Process owner — guards the contract, state machine, and workflow; unblocks BLOCKED, DoD gate | lean-ctx, graphify | Read-only | `*` (all), `BLOCKED` | reviewer | orchestration-template, audit-observability, adaptive-solver | `agents/scrum-master.md` |
 | **learner** | Post-execution retro — extract lessons, gotchas, patterns | lean-ctx | Read-only | `REVIEW_SCORED`, `COMPLETE` | executor | verification-before-completion | `agents/learner.md` |
@@ -163,7 +163,7 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 | **explorer** | Fast codebase search / unknowns discovery | lean-ctx, graphify | Read-only | `*` (all) | executor | (exploration) | `agents/explorer.md` |
 | **librarian** | External docs / library research | context7 | Read-only | `*` (all) | executor | (research) | `agents/librarian.md` |
 | **council** | Multi-model consensus + cross-model arbitration | lean-ctx, graphify | Read-only | `*` (all) | multi | (multi-LLM consensus) | `agents/council.md` |
-| **observer** | Visual analysis — images, PDFs, diagrams | lean-ctx | Read-only | `*` (all) | executor | (visual analysis) | `agents/observer.md` |
+| **observer** | Visual analysis — images, PDFs, diagrams | lean-ctx | Read-only | `*` (all) | executor | (visual analysis), impeccable, diagram-design | `agents/observer.md` |
 
 ### Lane Name Mapping
 | Lane | Agent | subagent_type |
@@ -251,12 +251,12 @@ Run this ladder in order before writing ANY code:
 
 ### Orchestration Flow (Scrum Team — Spec-Driven Development)
 
-1. **Refine phase** — Delegate to @product-manager: capture intent, write Given-When-Then acceptance criteria, declare scope + non-goals.
+1. **Refine phase** — Delegate to @product-manager: capture intent, write Given-When-Then acceptance criteria, declare scope + non-goals. Attach user-journey or story-map diagrams via diagram-design when intent spans multiple actors.
 2. **Discuss phase** — 5-lens check: Business, System, Dev, QA, DevOps. Clarify requirements.
-3. **Plan phase** — Delegate to @system-analyst: impact analysis, edge cases, implementation plan. @software-architect reviews the plan (independent model).
+3. **Plan phase** — Delegate to @system-analyst: impact analysis, edge cases, implementation plan. @software-architect reviews the plan (independent model). Plans spanning >3 files or crossing services include an architecture/impact diagram (diagram-design).
 4. **Spec gate** (if >3 files, cross-service, or >30 min) — Write GWT-format specs. Cross-examine via DDD.
-5. **Execute phase** — Delegate to @developer: implement plan step by step, write tests alongside code. @devops-engineer owns pipeline/deploy/migration. @fixer for scoped fixes.
-6. **Review phase** — Delegate to @quality-analyst (5-axis) AND @security-engineer (security) on the **reviewer model**, independent from the executor. Conflicting verdicts → BLOCKED, arbitrated by @council.
+5. **Execute phase** — Delegate to @developer: implement plan step by step, write tests alongside code. @devops-engineer owns pipeline/deploy/migration. @fixer for scoped fixes. UI tasks load design-taste-frontend; developer passes the impeccable detector before marking UI work done (EXECUTE exit gate).
+6. **Review phase** — Delegate to @quality-analyst (5-axis) AND @security-engineer (security) on the **reviewer model**, independent from the executor. Conflicting verdicts → BLOCKED, arbitrated by @council. UI diffs get the impeccable design-lens (slop detector) inside the readability axis.
 7. **Process gate** — @scrum-master audits transitions, enforces gates, and owns the Definition of Done before COMPLETE. Unblocks BLOCKED sessions.
 8. **Verify loop** — Run build commands, check conventions.
 9. **Ship** — Resolve issues, confirm deploy safety, run post-flight protocol; @learner captures lessons.
@@ -441,9 +441,12 @@ All skills at `skills/` (symlinked into the OpenCode config dir). Use `/skill <n
 | `audit-observability` | State contract audit trail, orchestration observability, score analytics, cross-service consistency |
 | `code-review-and-quality` | Review checklists, quality metrics |
 | `simplify` | Reduce complexity without changing behavior |
+| `impeccable` | Design director — critique, audit, polish UI; offline slop detector; required before UI tasks are marked done |
+| `design-taste-frontend` | Art direction for frontend builds — design brief, tokens, browser self-check loop |
+| `diagram-design` | 45+ branded HTML/SVG diagram types (architecture, flows, ER, journeys, deployment); Mermaid/drawio/excalidraw import |
 | `lean-ctx-{exploring,impact,debug,refactor,cli,guide}` | lean-ctx-specific workflows |
 
-*Last updated: 2026-10-15. If you modify conventions, workflows, or config, update this file.*
+*Last updated: 2026-10-29. If you modify conventions, workflows, or config, update this file.*
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
