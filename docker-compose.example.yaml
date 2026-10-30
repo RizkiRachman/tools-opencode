@@ -41,5 +41,21 @@ services:
       - ./opencode/config/opencode-model-fallback.json:/home/node/.config/opencode/opencode-model-fallback.json:ro
       - opencode-data:/home/node/.local/share/opencode
 
+  # Throwaway populate runner (profile "tools"): a stock image that works
+  # before the custom image exists -> fixes first-run store bootstrap.
+  # Runs as root, so the apt section works. The stock slim image
+  # lacks curl/python3/pip/git used by the script; bootstrap them, then run.
+  populate:
+    image: node:22-bookworm-slim
+    profiles: ["tools"]
+    user: root
+    volumes:
+      - ./opencode:/repo
+      - ./pre-install:/repo/pre-install   # explicit store mount (workspace level in this layout)
+    working_dir: /repo
+    command: >-
+      sh -c "apt-get update -qq && apt-get install -y -qq --no-install-recommends
+      curl ca-certificates python3 python3-pip git && sh /repo/populate-preinstall.sh"
+
 volumes:
   opencode-data:

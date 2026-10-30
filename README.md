@@ -60,7 +60,16 @@ ENV
 # 3. (Corporate proxy) add CA cert
 cp ~/corporate-ca.crt opencode/certs/
 
-# 4. Build & run
+# 4. Build & run — one command per OS (populates the offline pre-install
+#    store first, then builds; see "Offline builds" below):
+sh setup-linux.sh                                            # Linux
+./setup-mac.sh                                               # macOS
+powershell -ExecutionPolicy Bypass -File setup-windows.ps1   # Windows
+```
+
+**Advanced/manual** (skip the setup scripts):
+
+```bash
 docker compose -f docker-compose.example.yaml build opencode
 docker compose -f docker-compose.example.yaml up -d opencode
 ```
@@ -159,18 +168,38 @@ The uipro CLI bundle also ships companion skills: `banner-design`, `brand`, `des
 ## Offline builds (pre-install store)
 
 `pre-install/` is a local, gitignored package store that lets
-`docker compose up -d --build` stop re-downloading packages. Populate it once
-(root is only needed for the apt section; re-runs fetch only what is missing):
+`docker compose up -d --build` stop re-downloading packages. One setup script per OS
+populates the store and then builds — run the one for your OS from any working
+directory:
+
+```bash
+# Linux
+sh setup-linux.sh
+# macOS
+./setup-mac.sh
+# Windows (PowerShell)
+powershell -ExecutionPolicy Bypass -File setup-windows.ps1
+```
+
+- **Populate runs in a throwaway stock `node:22-bookworm-slim` container** —
+  the `populate` compose service (profile `tools`) — so the store can be
+  filled before the custom image exists, fixing the first-run
+  chicken-and-egg problem. The script is idempotent: re-runs fetch only
+  what is missing.
+- **Builds then install offline-first**: Docker cache mounts plus the
+  store's npm tarballs, pip wheels, and lean-ctx binary. Anything absent
+  still falls back to the network, so builds never break on a fresh
+  checkout.
+- **The store is portable**: it lives in the workspace, so copying the
+  workspace to another machine carries the store with it. Its contents are
+  gitignored (`pre-install/**` except `.gitkeep`) and are never committed
+  or pushed.
+
+**Alternative** — once the custom image is already built, you can still
+populate from inside the running container (root is only needed for the
+apt section):
 
     docker compose exec -u root opencode sh populate-preinstall.sh
-
-After that, builds install offline-first: Docker cache mounts plus the
-store's npm tarballs, pip wheels, and lean-ctx binary. Anything absent still
-falls back to the network, so builds never break on a fresh checkout.
-
-The store is portable: it lives in the workspace, so copying the workspace to
-another machine carries the store with it. Its contents are gitignored
-(`pre-install/**` except `.gitkeep`) and are never committed or pushed.
 
 **Store layout** — every artifact type follows the same skip-if-exists pattern:
 `populate-preinstall.sh` checks the marker (tarball, wheel, binary, `.deb`,
