@@ -333,7 +333,7 @@ Each scoring pass or LLM call SHOULD log the model used:
 ```json
 {
   "model": "deepseek-flash",
-  "fallback_chain": ["deepseek-flash", "claude-sonnet-4", "gpt-4o"],
+  "fallback_chain": ["deepseek-flash", "glm-5.3-flash"],
   "attempt": 1,
   "latency_ms": 2340,
   "tokens_used": 15200
@@ -346,7 +346,7 @@ Log every fallback attempt for observability:
 
 ```
 attempt 1: deepseek-flash → rate limit
-attempt 2: claude-sonnet-4 → success (2340ms, 15200 tok)
+attempt 2: glm-5.3-flash → success (2340ms, 15200 tok)
 ```
 
 ### Latency/Token Tracking
@@ -356,8 +356,7 @@ Track per-model latency and token consumption:
 | Model | Avg Latency | Avg Tokens | Success Rate |
 |-------|------------|-----------|-------------|
 | deepseek-flash | 1200ms | 8000 | 95% |
-| claude-sonnet-4 | 2400ms | 15000 | 99% |
-| gpt-4o | 1800ms | 12000 | 97% |
+| glm-5.3-flash | 1800ms | 12000 | 97% |
 
 ---
 
