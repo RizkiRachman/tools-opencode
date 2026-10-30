@@ -9,7 +9,7 @@
 
 </div>
 
-A self-hosted [opencode](https://opencode.ai) coding agent in Docker — TUI + web UI on port 4096, preloaded with the **workflow-state-engine** (15-agent scrum orchestration), **lean-ctx** code intelligence, and a curated skill set. Built for environments behind corporate proxies (Zscaler CA trust baked into the image).
+A self-hosted [opencode](https://opencode.ai) coding agent in Docker — TUI + web UI on port 4096, preloaded with the **workflow-state-engine** (16-agent scrum orchestration), **lean-ctx** code intelligence, and a curated skill set. Built for environments behind corporate proxies (Zscaler CA trust baked into the image).
 
 ## Table of Contents
 
@@ -27,7 +27,8 @@ A self-hosted [opencode](https://opencode.ai) coding agent in Docker — TUI + w
 - **opencode web + TUI** — browser-based agent access, auth-protected, bound to localhost
 - **Workflow-state-engine** — `/opt/engine`: contract-driven multi-agent orchestration (plan → execute → review → ship) with scoring gates
 - **lean-ctx MCP** — compressed file reads, semantic search, impact analysis, cross-session knowledge
-- **Design skill suite** — `impeccable` (UI slop detector), `design-taste-frontend` (art direction), `diagram-design` (45+ diagram types)
+- **4-layer UI/UX pipeline** — `design-exemplar` (84-brand reference library) → `ui-ux-pro-max` (BM25 design-system generator) → `design-taste-frontend` (art direction) → `impeccable` (UI slop-detector gate), enforced by the `ui-ux-tech-lead` agent
+- **Diagram engine** — `diagram-design` (45+ branded diagram types)
 - **Zscaler-safe builds** — drop your corporate CA in `certs/`, npm/git just work
 - **Model fallback** — automatic failover on rate limits, quota errors, and provider outages
 
@@ -125,8 +126,8 @@ opencode/
 │   ├── opencode.json              # main opencode config (models, MCPs, agents)
 │   └── opencode-model-fallback.json
 ├── engine/                        # workflow-state-engine → /opt/engine in image
-│   ├── agents/                    # 15 scrum-team agent definitions
-│   ├── skills/                    # 50+ skills (incl. impeccable, diagram-design)
+│   ├── agents/                    # 16 scrum-team agent definitions
+│   ├── skills/                    # 65+ skills (incl. full UI/UX pipeline: design-exemplar, ui-ux-pro-max, impeccable)
 │   └── commands/                  # slash commands
 └── session/                       # orchestration state (contract.json, archive/)
 ```
@@ -139,6 +140,21 @@ The engine is baked into the image at `/opt/engine` and symlinked into opencode'
 - `~/.config/opencode/command` → `/opt/engine/commands`
 
 Add a skill by dropping a directory under `engine/skills/<name>/SKILL.md`, rebuilding, and (for enforcement) attaching it in `engine/agents/<agent>.md` + `engine/agent.md` §3/§7.
+
+### UI/UX pipeline
+
+UI tasks route through `ui-ux-tech-lead` (mode: primary), which enforces the mandatory layer order:
+
+| Layer | Skill | Use when |
+|-------|-------|----------|
+| Exemplar | `design-exemplar` | A reference brand is named ("make it look like Linear") |
+| Generator | `ui-ux-pro-max` | Building from your own product description |
+| Taste | `design-taste-frontend` | Always — art-direction pass on the output |
+| Gate | `impeccable` | Always — no UI task is done without this review |
+
+Trivial tweaks (<10 lines, no new components) may skip layers 1–2, never layer 4.
+
+The uipro CLI bundle also ships companion skills: `banner-design`, `brand`, `design`, `design-system`, `slides`, `ui-styling`.
 
 ## Troubleshooting
 

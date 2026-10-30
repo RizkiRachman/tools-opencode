@@ -15,7 +15,7 @@ Single source of truth for all AI agents. Reference skills and usage guides for 
 ## Table of Contents
 1. [1. Project Overview](#1-project-overview)
 2. [2. Framework Architecture](#2-framework-architecture)
-3. [3. Agent Reference — 15 Agents (Scrum Team)](#3-agent-reference--15-agents-scrum-team)
+3. [3. Agent Reference — 16 Agents (Scrum Team)](#3-agent-reference--16-agents-scrum-team)
 4. [4. Tool Usage Reference](#4-tool-usage-reference)
 5. [5. Development Workflow](#5-development-workflow)
 6. [6. Non-Negotiable Rules](#6-non-negotiable-rules)
@@ -66,7 +66,7 @@ INIT → PLAN → PLAN_SCORED → EXECUTE → EXECUTE_SCORED → REVIEW → REVI
 ### Architecture
 
 ```
-agents/     → 15 agent instruction files (tech-lead, product-manager, scrum-master, developer, devops-engineer, quality-analyst, security-engineer, …)
+agents/     → 16 agent instruction files (tech-lead, product-manager, scrum-master, developer, devops-engineer, quality-analyst, security-engineer, …)
 skills/     → 50 skill directories (system-analyst, writing-plans, spec-driven-development, …)
 contract/   → contract.template.json, contract.schema.json, state.template.md
 rules/      → rules.json (state machine transitions, scoring thresholds, cross-model review)
@@ -88,7 +88,7 @@ The engine ships inside the container image (`COPY engine/ /opt/engine/`) and is
 ~/.config/opencode/
    ├── opencode.json → (bind-mounted) config/opencode.json
    ├── agent.md   → /opt/engine/agent.md      (instructions[0])
-   ├── /opt/engine/agents/    → /opt/engine/agents/        15 agent instruction files
+   ├── /opt/engine/agents/    → /opt/engine/agents/        16 agent instruction files
    ├── /opt/engine/skills/    → /opt/engine/skills/        50 skill directories
    ├── /opt/engine/rules/     → /opt/engine/rules/         rules.json (state machine)
    ├── /opt/engine/contract/  → /opt/engine/contract/      contract.template.json, contract.schema.json, state.template.md
@@ -106,7 +106,7 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 ├── agent.md           ← THIS FILE (instructions[0])
 ├── AGENTS.md          ← lean-ctx code intelligence (loaded at session start)
 ├── README.md          ← Project overview (diagram, badges)
-├── /opt/engine/agents/            ← 15 agent instruction files (+ _governance.md)
+├── /opt/engine/agents/            ← 16 agent instruction files (+ _governance.md)
 ├── /opt/engine/doc/               ← Workflow guides, project.md, reports
 ├── /opt/engine/rules/             ← rules.json (state machine, scoring, cross-model review)
 ├── /opt/engine/skills/            ← 50 skill directories
@@ -119,7 +119,7 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 
 ---
 
-## 3. Agent Reference — 15 Agents (Scrum Team)
+## 3. Agent Reference — 16 Agents (Scrum Team)
 
 > Full agent instruction files at `/opt/engine/agents/` (symlinked into the OpenCode config dir). Each file defines role, MCPs, skills, and post-flight protocol.
 >
@@ -130,6 +130,7 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
 | **tech-lead** | Scrum lead / primary orchestrator — delegates, scores, drives the state machine | lean-ctx, graphify, context7 | Read/write | `*` (all) | executor | (orchestrator — agent.md) | `/opt/engine/agents/tech-lead.md` |
+| **ui-ux-tech-lead** | UI/UX specialist orchestrator — enforces 4-layer design pipeline (Exemplar > Generator > Taste > Gate) | lean-ctx, graphify, context7 | Read/write | `*` (all) | executor | design-exemplar, ui-ux-pro-max, design-taste-frontend, impeccable | `/opt/engine/agents/ui-ux-tech-lead.md` |
 
 ### Product & Planning Agents (read-only)
 
@@ -260,6 +261,21 @@ Run this ladder in order before writing ANY code:
 7. **Process gate** — @scrum-master audits transitions, enforces gates, and owns the Definition of Done before COMPLETE. Unblocks BLOCKED sessions.
 8. **Verify loop** — Run build commands, check conventions.
 9. **Ship** — Resolve issues, confirm deploy safety, run post-flight protocol; @learner captures lessons.
+
+### UI/UX Pipeline (Mandatory)
+
+All UI work runs the 4-layer pipeline in this order — enforced by @ui-ux-tech-lead:
+
+| # | Layer | Skill | Role |
+|---|-------|-------|------|
+| 1 | Exemplar | `design-exemplar` | Copy a proven look from the 84-brand DESIGN.md library (Linear, Stripe, Vercel, …) when a reference brand is named |
+| 2 | Generator | `ui-ux-pro-max` | BM25-search a fitting design system (styles, palettes, fonts, patterns) for the user's own product |
+| 3 | Taste | `design-taste-frontend` | Art direction pass — kill generic "AI-slop" patterns, enforce gallery-grade composition |
+| 4 | Gate | `impeccable` | No UI task is done without an impeccable design-lens review |
+
+Layer selection: user names a reference brand → Exemplar; user describes their own product → Generator; neither → Generator; trivial tweak (<10 lines, no new components) → pipeline may be skipped, impeccable gate still applies.
+
+Rules: order is mandatory; never mix Exemplar + Generator for the same page; DESIGN.md (page) / MASTER.md (global) persistence per ui-ux-pro-max `--persist`.
 
 Use **Doubt-Driven Development (DDD)** when uncertain: spawn a fresh-context adversarial reviewer to cross-examine non-trivial decisions before they stand.
 
@@ -444,10 +460,18 @@ All skills at `/opt/engine/skills/` (symlinked into the OpenCode config dir). Us
 | `impeccable` | Design director — critique, audit, polish UI; offline slop detector; required before UI tasks are marked done |
 | `design-taste-frontend` | Art direction for frontend builds — design brief, tokens, browser self-check loop |
 | `diagram-design` | 45+ branded HTML/SVG diagram types (architecture, flows, ER, journeys, deployment); Mermaid/drawio/excalidraw import |
+| `design-exemplar` | Exemplar layer — awesome-design-md brand index (84 DESIGN.md files), fetch workflow, when to copy a reference look |
+| `ui-ux-pro-max` | Generator layer — BM25 design-system search (192 industry rules, 79 styles, 192 palettes, 74 font pairings), `--design-system`, `--persist` (MASTER.md) |
+| `banner-design` | Banner/hero art direction for social media, ads, web heroes (companion of ui-ux-pro-max) |
+| `brand` | Brand voice, visual identity, messaging frameworks, asset consistency (companion of ui-ux-pro-max) |
+| `design` | Umbrella design skill: logo generation, CIP mockups, HTML presentations, banners, icons, social photos (companion of ui-ux-pro-max) |
+| `design-system` | Token architecture (primitive→semantic→component), CSS variables, component specs, slide generation (companion of ui-ux-pro-max) |
+| `slides` | Strategic HTML presentations with Chart.js, design tokens, responsive layouts (companion of ui-ux-pro-max) |
+| `ui-styling` | shadcn/ui + Tailwind + canvas-based UI styling, accessible components, theming (companion of ui-ux-pro-max) |
 | `awesome-readme` | README/docs standard — badges, TOC, quick start, config tables, architecture notes (distilled from matiassingers/awesome-readme) |
 | `lean-ctx-{exploring,impact,debug,refactor,cli,guide}` | lean-ctx-specific workflows |
 
-*Last updated: 2026-10-29. If you modify conventions, workflows, or config, update this file.*
+*Last updated: 2026-10-30. If you modify conventions, workflows, or config, update this file.*
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
