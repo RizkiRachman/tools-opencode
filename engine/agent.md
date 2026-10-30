@@ -88,12 +88,12 @@ The engine ships inside the container image (`COPY engine/ /opt/engine/`) and is
 ~/.config/opencode/
    ├── opencode.json → (bind-mounted) config/opencode.json
    ├── agent.md   → /opt/engine/agent.md      (instructions[0])
-   ├── agents/    → /opt/engine/agents/        15 agent instruction files
-   ├── skills/    → /opt/engine/skills/        50 skill directories
-   ├── rules/     → /opt/engine/rules/         rules.json (state machine)
-   ├── contract/  → /opt/engine/contract/      contract.template.json, contract.schema.json, state.template.md
-   ├── usage/     → /opt/engine/usage/         4 tool usage guides
-   └── doc/       → /opt/engine/doc/           workflow guides, reports
+   ├── /opt/engine/agents/    → /opt/engine/agents/        15 agent instruction files
+   ├── /opt/engine/skills/    → /opt/engine/skills/        50 skill directories
+   ├── /opt/engine/rules/     → /opt/engine/rules/         rules.json (state machine)
+   ├── /opt/engine/contract/  → /opt/engine/contract/      contract.template.json, contract.schema.json, state.template.md
+   ├── /opt/engine/usage/     → /opt/engine/usage/         4 tool usage guides
+   └── /opt/engine/doc/       → /opt/engine/doc/           workflow guides, reports
 ```
 
 Engine changes take effect on container rebuild; the bind-mounted config on restart.
@@ -106,13 +106,13 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 ├── agent.md           ← THIS FILE (instructions[0])
 ├── AGENTS.md          ← lean-ctx code intelligence (loaded at session start)
 ├── README.md          ← Project overview (diagram, badges)
-├── agents/            ← 15 agent instruction files (+ _governance.md)
-├── doc/               ← Workflow guides, project.md, reports
-├── rules/             ← rules.json (state machine, scoring, cross-model review)
-├── skills/            ← 50 skill directories
-├── contract/          ← contract.template.json, contract.schema.json, state.template.md
-├── usage/             ← 4 tool usage guides
-└── scripts/           ← Automation & validation scripts
+├── /opt/engine/agents/            ← 15 agent instruction files (+ _governance.md)
+├── /opt/engine/doc/               ← Workflow guides, project.md, reports
+├── /opt/engine/rules/             ← rules.json (state machine, scoring, cross-model review)
+├── /opt/engine/skills/            ← 50 skill directories
+├── /opt/engine/contract/          ← contract.template.json, contract.schema.json, state.template.md
+├── /opt/engine/usage/             ← 4 tool usage guides
+└── /opt/engine/scripts/           ← Automation & validation scripts
 ```
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
@@ -121,7 +121,7 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 
 ## 3. Agent Reference — 15 Agents (Scrum Team)
 
-> Full agent instruction files at `agents/` (symlinked into the OpenCode config dir). Each file defines role, MCPs, skills, and post-flight protocol.
+> Full agent instruction files at `/opt/engine/agents/` (symlinked into the OpenCode config dir). Each file defines role, MCPs, skills, and post-flight protocol.
 >
 > **Model tiers**: `executor` = `opencode/big-pickle`; `reviewer` = `sumopod/deepseek-v4-flash` (independent model). Reviewers never share the executor's model — this is the basis of **cross-model review**.
 
@@ -129,41 +129,41 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
-| **tech-lead** | Scrum lead / primary orchestrator — delegates, scores, drives the state machine | lean-ctx, graphify, context7 | Read/write | `*` (all) | executor | (orchestrator — agent.md) | `agents/tech-lead.md` |
+| **tech-lead** | Scrum lead / primary orchestrator — delegates, scores, drives the state machine | lean-ctx, graphify, context7 | Read/write | `*` (all) | executor | (orchestrator — agent.md) | `/opt/engine/agents/tech-lead.md` |
 
 ### Product & Planning Agents (read-only)
 
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
-| **product-manager** | Requirements + acceptance-criteria backlog (GWT) | lean-ctx, context7 | Read-only | `INIT`, `PLAN` | reviewer | business-analyst, brainstorming, writing-plans, diagram-design | `agents/product-manager.md` |
-| **system-analyst** | Impact analysis, specs, detailed plans | lean-ctx, graphify | Read-only | `INIT`, `PLAN`, `PLAN_SCORED` | executor | system-analyst, business-analyst, writing-plans, diagram-design | `agents/system-analyst.md` |
-| **software-architect** | Architecture trade-offs, tech-debt assessment | lean-ctx, graphify | Read-only | `INIT`, `PLAN`, `PLAN_SCORED`, `REVIEW` | reviewer | system-analyst, java-developer, diagram-design | `agents/software-architect.md` |
+| **product-manager** | Requirements + acceptance-criteria backlog (GWT) | lean-ctx, context7 | Read-only | `INIT`, `PLAN` | reviewer | business-analyst, brainstorming, writing-plans, diagram-design | `/opt/engine/agents/product-manager.md` |
+| **system-analyst** | Impact analysis, specs, detailed plans | lean-ctx, graphify | Read-only | `INIT`, `PLAN`, `PLAN_SCORED` | executor | system-analyst, business-analyst, writing-plans, diagram-design | `/opt/engine/agents/system-analyst.md` |
+| **software-architect** | Architecture trade-offs, tech-debt assessment | lean-ctx, graphify | Read-only | `INIT`, `PLAN`, `PLAN_SCORED`, `REVIEW` | reviewer | system-analyst, java-developer, diagram-design | `/opt/engine/agents/software-architect.md` |
 
 ### Implementation Agents (read/write)
 
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
-| **developer** | Implements the plan, writes tests alongside code | lean-ctx | Read/write | `EXECUTE`, `EXECUTE_SCORED` | executor | test-driven-development, software-developer, design-taste-frontend, impeccable | `agents/developer.md` |
-| **devops-engineer** | CI/CD, containerization, deploy, migrations, observability, rollback | lean-ctx | Read/write | `EXECUTE`, `EXECUTE_SCORED`, `REVIEW` | executor | devops-expert, observability-and-instrumentation, diagram-design | `agents/devops-engineer.md` |
-| **fixer** | Bounded, scoped fixes for well-defined tasks | lean-ctx | Read/write | `EXECUTE` | executor | systematic-debugging | `agents/fixer.md` |
+| **developer** | Implements the plan, writes tests alongside code | lean-ctx | Read/write | `EXECUTE`, `EXECUTE_SCORED` | executor | test-driven-development, software-developer, design-taste-frontend, impeccable | `/opt/engine/agents/developer.md` |
+| **devops-engineer** | CI/CD, containerization, deploy, migrations, observability, rollback | lean-ctx | Read/write | `EXECUTE`, `EXECUTE_SCORED`, `REVIEW` | executor | devops-expert, observability-and-instrumentation, diagram-design | `/opt/engine/agents/devops-engineer.md` |
+| **fixer** | Bounded, scoped fixes for well-defined tasks | lean-ctx | Read/write | `EXECUTE` | executor | systematic-debugging | `/opt/engine/agents/fixer.md` |
 
 ### Quality & Process Agents (read-only)
 
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
-| **quality-analyst** | Independent quality review (5-axis: correctness, readability, architecture, security, performance) | lean-ctx, postgres | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | qa-expert, security-expert, code-review-and-quality, impeccable | `agents/quality-analyst.md` |
-| **security-engineer** | Independent security review — threat model, vulns, secrets, trust boundaries | lean-ctx | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | security-expert, code-review-and-quality | `agents/security-engineer.md` |
-| **scrum-master** | Process owner — guards the contract, state machine, and workflow; unblocks BLOCKED, DoD gate | lean-ctx, graphify | Read-only | `*` (all), `BLOCKED` | reviewer | orchestration-template, audit-observability, adaptive-solver | `agents/scrum-master.md` |
-| **learner** | Post-execution retro — extract lessons, gotchas, patterns | lean-ctx | Read-only | `REVIEW_SCORED`, `COMPLETE` | executor | verification-before-completion | `agents/learner.md` |
+| **quality-analyst** | Independent quality review (5-axis: correctness, readability, architecture, security, performance) | lean-ctx, postgres | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | qa-expert, security-expert, code-review-and-quality, impeccable | `/opt/engine/agents/quality-analyst.md` |
+| **security-engineer** | Independent security review — threat model, vulns, secrets, trust boundaries | lean-ctx | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | security-expert, code-review-and-quality | `/opt/engine/agents/security-engineer.md` |
+| **scrum-master** | Process owner — guards the contract, state machine, and workflow; unblocks BLOCKED, DoD gate | lean-ctx, graphify | Read-only | `*` (all), `BLOCKED` | reviewer | orchestration-template, audit-observability, adaptive-solver | `/opt/engine/agents/scrum-master.md` |
+| **learner** | Post-execution retro — extract lessons, gotchas, patterns | lean-ctx | Read-only | `REVIEW_SCORED`, `COMPLETE` | executor | verification-before-completion | `/opt/engine/agents/learner.md` |
 
 ### Support Agents (read-only)
 
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
-| **explorer** | Fast codebase search / unknowns discovery | lean-ctx, graphify | Read-only | `*` (all) | executor | (exploration) | `agents/explorer.md` |
-| **librarian** | External docs / library research | context7 | Read-only | `*` (all) | executor | (research) | `agents/librarian.md` |
-| **council** | Multi-model consensus + cross-model arbitration | lean-ctx, graphify | Read-only | `*` (all) | multi | (multi-LLM consensus) | `agents/council.md` |
-| **observer** | Visual analysis — images, PDFs, diagrams | lean-ctx | Read-only | `*` (all) | executor | (visual analysis), impeccable, diagram-design | `agents/observer.md` |
+| **explorer** | Fast codebase search / unknowns discovery | lean-ctx, graphify | Read-only | `*` (all) | executor | (exploration) | `/opt/engine/agents/explorer.md` |
+| **librarian** | External docs / library research | context7 | Read-only | `*` (all) | executor | (research) | `/opt/engine/agents/librarian.md` |
+| **council** | Multi-model consensus + cross-model arbitration | lean-ctx, graphify | Read-only | `*` (all) | multi | (multi-LLM consensus) | `/opt/engine/agents/council.md` |
+| **observer** | Visual analysis — images, PDFs, diagrams | lean-ctx | Read-only | `*` (all) | executor | (visual analysis), impeccable, diagram-design | `/opt/engine/agents/observer.md` |
 
 ### Lane Name Mapping
 | Lane | Agent | subagent_type |
@@ -180,7 +180,7 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 
 ### Agent State Machine
 
-See [`doc/workflow.md`](./doc/workflow.md) for the canonical state machine, scoring pipeline, gates, and validation rules.
+See [`/opt/engine/doc/workflow.md`](/opt/engine/doc/workflow.md) for the canonical state machine, scoring pipeline, gates, and validation rules.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -193,9 +193,9 @@ See [`doc/workflow.md`](./doc/workflow.md) for the canonical state machine, scor
 
 | Tool | What It Does | Guide |
 |------|-------------|-------|
-| **lean-ctx** | File reads, shell, search, edit, impact analysis, knowledge persistence, sessions | `usage/lean-ctx.md` |
-| **Graphify** | Knowledge graph, community discovery, PR impact | `usage/graphify.md` |
-| **Context7** | Library/framework docs lookup | `usage/context7.md` |
+| **lean-ctx** | File reads, shell, search, edit, impact analysis, knowledge persistence, sessions | `/opt/engine/usage/lean-ctx.md` |
+| **Graphify** | Knowledge graph, community discovery, PR impact | `/opt/engine/usage/graphify.md` |
+| **Context7** | Library/framework docs lookup | `/opt/engine/usage/context7.md` |
 
 ### 4.3 Tool Comparison Matrix
 
@@ -267,7 +267,7 @@ Use **Doubt-Driven Development (DDD)** when uncertain: spawn a fresh-context adv
 
 | # | Step | Tool |
 |---|------|------|
-| **0** | Validate contract | `bash scripts/validate-contract.sh --file session/contract.json --score` |
+| **0** | Validate contract | `bash /opt/engine/scripts/validate-contract.sh --file session/contract.json --score` |
 | 1 | Impact verify | `ctx_impact` |
 | 2 | Change detect | `ctx_delta` |
 | 3 | Knowledge persist | `lean-ctx ctx_knowledge remember` |
@@ -275,9 +275,9 @@ Use **Doubt-Driven Development (DDD)** when uncertain: spawn a fresh-context adv
 | 5 | STATE.md | `ctx_edit` |
 | 6 | Session save (complete) | See **Save Session Protocol** below
 
-**Pre-flight**: `bash scripts/validate-contract.sh --file session/contract.json --score` (score < 70 = BLOCKED)
-**Parallel conflict check**: `bash scripts/detect-parallel-conflicts.sh --file1 /tmp/a.txt --file2 /tmp/b.txt`
-**Atomic persist**: `bash scripts/persist-contract.sh --file session/contract.json --inject-score 85` |
+**Pre-flight**: `bash /opt/engine/scripts/validate-contract.sh --file session/contract.json --score` (score < 70 = BLOCKED)
+**Parallel conflict check**: `bash /opt/engine/scripts/detect-parallel-conflicts.sh --file1 /tmp/a.txt --file2 /tmp/b.txt`
+**Atomic persist**: `bash /opt/engine/scripts/persist-contract.sh --file session/contract.json --inject-score 85` |
 
 Exceptions: docs-only changes skip 1, 2, 4. Config-only skip 1, 2.
 
@@ -292,7 +292,7 @@ lean-ctx ctx_knowledge remember key orchestration-contract value "<JSON>"
 # 2. Update session/state.md — append completed work items
 
 # 3. Archive snapshot to session/ (contract files + state log + index)
-bash scripts/snapshot-contract.sh --snapshot-only
+bash /opt/engine/scripts/snapshot-contract.sh --snapshot-only
 
 # 4. Save conversation context (survives OpenCode restart)
 lean-ctx ctx_session save
@@ -312,7 +312,7 @@ After major changes (merged work or resumed sessions), synchronize all state sys
 graphify --update 2>/dev/null || true
 
 # 3. Snapshot contract state (session/ → archive)
-bash scripts/snapshot-contract.sh
+bash /opt/engine/scripts/snapshot-contract.sh
 
 # 4. Save conversation context (survives OpenCode restart)
 lean-ctx ctx_session save
@@ -337,9 +337,9 @@ session/
 
 | Event | Action |
 |-------|--------|
-| **State transition** | Update `session/contract.json` → snapshot via `scripts/snapshot-contract.sh` |
+| **State transition** | Update `session/contract.json` → snapshot via `/opt/engine/scripts/snapshot-contract.sh` |
 | **Session end** (COMPLETE/BLOCKED) | Final snapshot → append summary to `session/state.md` |
-| **New session** | Re-scaffold `session/contract.json` from `contract/contract.template.json` |
+| **New session** | Re-scaffold `session/contract.json` from `/opt/engine/contract/contract.template.json` |
 
 #### Snapshot Command Reference
 
@@ -358,7 +358,7 @@ The `session/` archive preserves:
 
 ### Complex Tasks (Orchestration Template)
 
-See [orchestration-template skill](skills/orchestration-template/SKILL.md) and [`doc/workflow.md`](doc/workflow.md) for the full orchestration protocol.
+See [orchestration-template skill](/opt/engine/skills/orchestration-template/SKILL.md) and [`/opt/engine/doc/workflow.md`](/opt/engine/doc/workflow.md) for the full orchestration protocol.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -394,7 +394,7 @@ See [orchestration-template skill](skills/orchestration-template/SKILL.md) and [
 
 ## 7. Skills Reference
 
-All skills at `skills/` (symlinked into the OpenCode config dir). Use `/skill <name>` for deep dives. Each skill directory contains a `SKILL.md` with full guidance.
+All skills at `/opt/engine/skills/` (symlinked into the OpenCode config dir). Use `/skill <name>` for deep dives. Each skill directory contains a `SKILL.md` with full guidance.
 
 | Skill | When to Load |
 |-------|-------------|

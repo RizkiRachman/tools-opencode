@@ -84,6 +84,35 @@
         "memory_*": "allow"
       }
     },
+    "ui-ux-tech-lead": {
+      "description": "UI/UX specialist orchestrator — enforces 4-layer design pipeline (Exemplar > Generator > Taste > Gate).",
+      "mode": "primary",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 4096,
+      "temperature": 0.2,
+      "top_p": 1,
+      "steps": 50,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "deny",
+        "grep": "deny",
+        "glob": "deny",
+        "list": "deny",
+        "write": "deny",
+        "webfetch": "deny",
+        "skill": "allow",
+        "task": {
+          "*": "allow"
+        },
+        "lean-ctx_*": "allow",
+        "context7_*": "allow",
+        "memory_*": "allow"
+      }
+    },
     "product-manager": {
       "description": "Owns requirements and the acceptance-criteria backlog. Turns user intent into testable Given-When-Then criteria. Read-only — no edits.",
       "mode": "subagent",
