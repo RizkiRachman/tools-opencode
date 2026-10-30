@@ -1,5 +1,5 @@
-* text=auto
 *.sh text eol=lf
-populate-preinstall.sh text eol=lf
-*.ps1 text eol=crlf
-*.png binary
+Dockerfile text eol=lf
+*.json text eol=lf
+*.yml text eol=lf
+*.yaml text eol=lf

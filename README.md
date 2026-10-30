@@ -60,19 +60,13 @@ ENV
 # 3. (Corporate proxy) add CA cert
 cp ~/corporate-ca.crt opencode/certs/
 
-# 4. Build & run — one command per OS (populates the offline pre-install
-#    store first, then builds; see "Offline builds" below):
-sh setup-linux.sh                                            # Linux
-./setup-mac.sh                                               # macOS
-powershell -ExecutionPolicy Bypass -File setup-windows.ps1   # Windows
+# 4. Populate the offline pre-install store (throwaway node:22 container;
+#    see "Offline builds" below), then build & run:
+docker compose -f docker-compose.example.yaml run --rm populate
+docker compose -f docker-compose.example.yaml up -d --build
 ```
 
-**Advanced/manual** (skip the setup scripts):
-
-```bash
-docker compose -f docker-compose.example.yaml build opencode
-docker compose -f docker-compose.example.yaml up -d opencode
-```
+> Using your own compose file (e.g. workspace root with the repo in `opencode/` subdir)? Point `-f` at it — or set `COMPOSE_FILE`.
 
 Open **http://localhost:4096**.
 
@@ -168,23 +162,14 @@ The uipro CLI bundle also ships companion skills: `banner-design`, `brand`, `des
 ## Offline builds (pre-install store)
 
 `pre-install/` is a local, gitignored package store that lets
-`docker compose up -d --build` stop re-downloading packages. One setup script per OS
-populates the store and then builds — run the one for your OS from any working
-directory:
-
-```bash
-# Linux
-sh setup-linux.sh
-# macOS
-./setup-mac.sh
-# Windows (PowerShell)
-powershell -ExecutionPolicy Bypass -File setup-windows.ps1
-```
+`docker compose up -d --build` stop re-downloading packages. The `populate`
+compose service fills the store once before the first build (see
+[Quick Start](#quick-start)):
 
 - **Populate runs in a throwaway stock `node:22-bookworm-slim` container** —
   the `populate` compose service (profile `tools`) — so the store can be
   filled before the custom image exists, fixing the first-run
-  chicken-and-egg problem. The script is idempotent: re-runs fetch only
+  chicken-and-egg problem. Populate is idempotent: re-runs fetch only
   what is missing.
 - **Builds then install offline-first**: Docker cache mounts plus the
   store's npm tarballs, pip wheels, and lean-ctx binary. Anything absent
