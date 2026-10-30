@@ -15,7 +15,7 @@ Runtime contract validation and agent→state MCP enforcement.
 OPTIONS:
   --contract FILE      Contract JSON file to enforce (required)
   --mode MODE          Enforcement mode: validate|enforce|mcp (default: validate)
-  --agent AGENT        Agent name for MCP enforcement (e.g. tech-lead, developer)
+  --agent AGENT        Agent name for MCP enforcement (e.g. orchestrator, developer)
   --state STATE        Target state for MCP enforcement (e.g. EXECUTE, REVIEW)
   --timeout MS         Timeout in milliseconds (default: 30000)
   --hardening LEVEL    Hardening level: soft|medium|hard (default: medium)
@@ -171,7 +171,7 @@ mcp_enforce_agent_state() {
     local current_state
     current_state=$(jq -r '.state // "INIT"' "$CONTRACT_FILE")
     local current_agent
-    current_agent=$(jq -r '.agent // "tech-lead"' "$CONTRACT_FILE")
+    current_agent=$(jq -r '.agent // "orchestrator"' "$CONTRACT_FILE")
     log_verbose "Current: agent=$current_agent, state=$current_state"
     if [[ "$DRY_RUN" -eq 1 ]]; then
         log_pass "Dry run: transition $current_state → $TARGET_STATE allowed"

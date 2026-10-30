@@ -38,8 +38,8 @@ Specific skills and their primary agent assignments:
 
 | Skill | Primary Agent | Purpose |
 |-------|--------------|---------|
-| `audit-observability` | `tech-lead`, `scrum-master` | State contract audit trail, orchestration observability, score analytics, cross-service consistency enforcement |
-| `orchestration-template` | `tech-lead`, `scrum-master` | Contract-based multi-agent orchestration, state machine enforcement |
+| `audit-observability` | `orchestrator`, `scrum-master` | State contract audit trail, orchestration observability, score analytics, cross-service consistency enforcement |
+| `orchestration-template` | `orchestrator`, `scrum-master` | Contract-based multi-agent orchestration, state machine enforcement |
 | `business-analyst` | `product-manager`, `system-analyst` | Requirements gathering, acceptance criteria (GWT), value prioritization |
 | `writing-plans` | `product-manager`, `system-analyst` | Structured implementation plans, dependency graphs, rollback strategy |
 | `system-analyst` | `system-analyst`, `software-architect` | Architecture evaluation, dependency mapping, impact analysis |

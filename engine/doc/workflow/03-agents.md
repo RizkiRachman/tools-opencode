@@ -10,7 +10,7 @@ This part maps all 16 agents (scrum team) to their contract states, MCPs, and sk
 
 | Agent | Contract States | Key MCPs | Skills to Load | Usage Pattern |
 |---|---|---|---|---|
-| **tech-lead** | all states | lean-ctx, context7, graphify | (orchestrator — agent.md) | delegate → score → persist |
+| **orchestrator** | all states | lean-ctx, context7, graphify | (orchestrator — agent.md) | delegate → score → persist |
 | **product-manager** | INIT, PLAN | lean-ctx, context7 | business-analyst, brainstorming, writing-plans | intent → GWT criteria → scope |
 | **scrum-master** | all, BLOCKED | lean-ctx, graphify | orchestration-template, audit-observability, adaptive-solver | audit → enforce → unblock |
 | **system-analyst** | INIT, PLAN, PLAN_SCORED | lean-ctx, graphify | brainstorming, writing-plans, doubt-driven-development | analyze → plan/spec |
@@ -28,7 +28,7 @@ This part maps all 16 agents (scrum team) to their contract states, MCPs, and sk
 
 ## C2. Agent Profiles
 
-- **tech-lead**: Orchestrator — delegates, scores, drives state machine. Highest privilege: read/write all contract fields.
+- **orchestrator**: Orchestrator — delegates, scores, drives state machine. Highest privilege: read/write all contract fields.
 - **product-manager**: Requirements owner — turns intent into testable GWT acceptance criteria and declares scope/non-goals. Read-only, reviewer model.
 - **scrum-master**: Process owner — audits transitions, enforces gates and DoD, unblocks BLOCKED, drives retros. Read-only, reviewer model.
 - **system-analyst**: Planner — analyzes, traces, produces specs/plans. Read-only: never writes code.
@@ -51,12 +51,12 @@ This part maps all 16 agents (scrum team) to their contract states, MCPs, and sk
 ```
 1. User request
        │
-2. tech-lead creates contract envelope
+2. orchestrator creates contract envelope
        │  (session/contract.json → lean-ctx knowledge)
        ▼
 3. Envelope stored: lean-ctx ctx_knowledge remember key="orchestration-contract"
        │
-4. tech-lead delegates: task({subagent_type: "system-analyst", prompt: "..."})
+4. orchestrator delegates: task({subagent_type: "system-analyst", prompt: "..."})
        │
 5. Subagent reads envelope: lean-ctx ctx_knowledge recall --query "orchestration-contract"
        │
@@ -65,7 +65,7 @@ This part maps all 16 agents (scrum team) to their contract states, MCPs, and sk
        │
 7. Subagent returns result (output structure depends on phase — plan, code, or report)
        │
-8. tech-lead scores → updates envelope → persists → delegates next agent
+8. orchestrator scores → updates envelope → persists → delegates next agent
        │
 9. Loop: PLAN → EXECUTE → REVIEW → COMPLETE (or BLOCKED → retry)
 ```
@@ -80,7 +80,7 @@ This part maps all 16 agents (scrum team) to their contract states, MCPs, and sk
 ```
                      agent.md (instructions[0])
                            │
-                        tech-lead  (orchestrator, default_agent)
+                        orchestrator  (orchestrator, default_agent)
                            │
         ┌──────────┬───────┼────────┬───────────────┐
         ▼          ▼       ▼        ▼               ▼
@@ -98,7 +98,7 @@ This part maps all 16 agents (scrum team) to their contract states, MCPs, and sk
 
 Executor model: `opencode/big-pickle` · Reviewer model: `sumopod/deepseek-flash` · Arbitration: `council`.
 
-The pipeline shows the hierarchy: `agent.md` is loaded by every agent at session start. Agents delegate down the pipeline (tech-lead → system-analyst → developer → quality-analyst), with usage guides loaded on demand by any agent.
+The pipeline shows the hierarchy: `agent.md` is loaded by every agent at session start. Agents delegate down the pipeline (orchestrator → system-analyst → developer → quality-analyst), with usage guides loaded on demand by any agent.
 
 ### Folder → Workflow Mapping
 
@@ -117,11 +117,11 @@ The pipeline shows the hierarchy: `agent.md` is loaded by every agent at session
 | Phase | Agent | Primary Tools | Skills Loaded |
 |---|---|---|---|
 | INIT → PLAN | product-manager → system-analyst | ctx_impact, ctx_compose, context7, graphify | business-analyst, brainstorming, writing-plans, doubt-driven-development |
-| PLAN_SCORED | tech-lead (+ software-architect review) | lean-ctx (scoring), lean-ctx (persist) | spec-driven-development (SDD gate) |
+| PLAN_SCORED | orchestrator (+ software-architect review) | lean-ctx (scoring), lean-ctx (persist) | spec-driven-development (SDD gate) |
 | EXECUTE | developer (+ devops-engineer, fixer) | ctx_impact, lean-ctx (write) | test-driven-development, devops-expert, observability-and-instrumentation |
-| EXECUTE_SCORED | tech-lead | lean-ctx (scoring) | doubt-driven-development (DDD gate), over-engineering check |
+| EXECUTE_SCORED | orchestrator | lean-ctx (scoring) | doubt-driven-development (DDD gate), over-engineering check |
 | REVIEW | quality-analyst + security-engineer | lean-ctx (read), lean-ctx (impact) | code-review-and-quality, qa-expert, security-expert |
-| REVIEW_SCORED | tech-lead (+ scrum-master DoD gate) | lean-ctx (scoring + persist) | verification-before-completion |
+| REVIEW_SCORED | orchestrator (+ scrum-master DoD gate) | lean-ctx (scoring + persist) | verification-before-completion |
 | COMPLETE | learner | lean-ctx (knowledge), lean-ctx (detect) | verification-before-completion, software-developer |
 | BLOCKED | scrum-master | lean-ctx (audit), ctx_impact | orchestration-template, adaptive-solver, audit-observability |
 
@@ -130,13 +130,13 @@ The pipeline shows the hierarchy: `agent.md` is loaded by every agent at session
 | Concept | Definition | Configured In | Loaded By |
 |---|---|---|---|
 | Envelope | Shared session state | `session/contract.json` | lean-ctx knowledge recall |
-| State machine | Legal transitions | `rules/rules.json` | tech-lead (enforced in prompt) |
-| Scoring | PASS/RETRY/BLOCKED | `rules/rules.json` | tech-lead (scoring pipeline) |
+| State machine | Legal transitions | `rules/rules.json` | orchestrator (enforced in prompt) |
+| Scoring | PASS/RETRY/BLOCKED | `rules/rules.json` | orchestrator (scoring pipeline) |
 | Agents | Role definitions | `opencode.json` + `agents/*.md` | OpenCode at startup |
 | Skills | Extensible behaviors | `skills/*/SKILL.md` | On-demand via skill() tool |
 | Tools | MCP capabilities | `opencode.json` mcp section | OpenCode MCP client |
 | Usage guides | How-to references | `usage/*.md` | On-demand via lean-ctx read |
-| Governance | Rules, constraints, safety | `agents/_governance.md` | All agents at session start |
+| Governance | Rules, constraints, safety | `agent.md §6 + rules.json` | All agents at session start |
 | Contract schema | Envelope structure | `contract/contract.schema.json` | validate-contract.sh at every transition |
 | Session archive | Per-session snapshots | `session/` | scripts/snapshot-contract.sh |
 | Audit-observability | State tracking, score analytics | `skills/audit-observability/SKILL.md` | On-demand via skill() |

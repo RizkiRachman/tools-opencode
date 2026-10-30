@@ -66,7 +66,7 @@ INIT → PLAN → PLAN_SCORED → EXECUTE → EXECUTE_SCORED → REVIEW → REVI
 ### Architecture
 
 ```
-agents/     → 16 agent instruction files (tech-lead, product-manager, scrum-master, developer, devops-engineer, quality-analyst, security-engineer, …)
+agents/     → 16 agent instruction files (orchestrator, product-manager, scrum-master, developer, devops-engineer, quality-analyst, security-engineer, …)
 skills/     → 64 skill directories (system-analyst, writing-plans, spec-driven-development, …)
 contract/   → contract.template.json, contract.schema.json, state.template.md
 rules/      → rules.json (state machine transitions, scoring thresholds, cross-model review)
@@ -106,7 +106,7 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 ├── agent.md           ← THIS FILE (instructions[0])
 ├── AGENTS.md          ← lean-ctx code intelligence (loaded at session start)
 ├── README.md          ← Project overview (diagram, badges)
-├── /opt/engine/agents/            ← 16 agent instruction files (+ _governance.md)
+├── /opt/engine/agents/            ← 16 agent instruction files
 ├── /opt/engine/doc/               ← Workflow guides, project.md, reports
 ├── /opt/engine/rules/             ← rules.json (state machine, scoring, cross-model review)
 ├── /opt/engine/skills/            ← 64 skill directories
@@ -129,8 +129,8 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
-| **tech-lead** | Scrum lead / primary orchestrator — delegates, scores, drives the state machine | lean-ctx, graphify, context7 | Read/write | `*` (all) | executor | (orchestrator — agent.md) | `/opt/engine/agents/tech-lead.md` |
-| **ui-ux-tech-lead** | UI/UX specialist orchestrator — enforces 4-layer design pipeline (Exemplar > Generator > Taste > Gate) | lean-ctx, graphify, context7 | Read/write | `*` (all) | executor | design-exemplar, ui-ux-pro-max, design-taste-frontend, impeccable | `/opt/engine/agents/ui-ux-tech-lead.md` |
+| **orchestrator** | Scrum lead / primary orchestrator — delegates, scores, drives the state machine | lean-ctx, graphify, context7 | Read/write | `*` (all) | executor | (orchestrator — agent.md) | `/opt/engine/agents/orchestrator.md` |
+| **design-orchestrator** | UI/UX specialist orchestrator — enforces 4-layer design pipeline (Exemplar > Generator > Taste > Gate) | lean-ctx, graphify, context7 | Read/write | `*` (all) | executor | design-exemplar, ui-ux-pro-max, design-taste-frontend, impeccable | `/opt/engine/agents/design-orchestrator.md` |
 
 ### Product & Planning Agents (read-only)
 
@@ -264,7 +264,7 @@ Run this ladder in order before writing ANY code:
 
 ### UI/UX Pipeline (Mandatory)
 
-All UI work runs the 4-layer pipeline in this order — enforced by @ui-ux-tech-lead:
+All UI work runs the 4-layer pipeline in this order — enforced by @design-orchestrator:
 
 | # | Layer | Skill | Role |
 |---|-------|-------|------|

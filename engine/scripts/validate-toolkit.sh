@@ -62,7 +62,7 @@ Checks performed:
   4. Agent file consistency
      Verifies each .md file in agents/ has a proper heading.
   5. Cross-references
-     Verifies internal links in agent.md and paths in _governance.md
+     Verifies internal links in agent.md
      resolve to actual files.
 
 Exit codes:
@@ -414,13 +414,10 @@ check_agent_consistency() {
             if grep -qF "$basename_f" "$opencode_json" 2>/dev/null; then
                 referenced=$((referenced + 1))
             else
-                # Skip _governance.md — it's an include, not a standalone agent
-                if [[ "$basename_f" != "_governance.md" ]]; then
-                    if [[ "$VERBOSE" == true ]]; then
-                        log_verbose "  $basename_f not referenced in opencode.json"
-                    fi
-                    not_referenced=$((not_referenced + 1))
+                if [[ "$VERBOSE" == true ]]; then
+                    log_verbose "  $basename_f not referenced in opencode.json"
                 fi
+                not_referenced=$((not_referenced + 1))
             fi
         done
 
@@ -483,51 +480,6 @@ check_cross_references() {
         fi
     else
         log_info "No agent.md found — skipping cross-reference check"
-    fi
-
-    # 5b: File paths in _governance.md
-    local gov_md="$PROJECT_ROOT/agents/_governance.md"
-    if [[ -f "$gov_md" ]]; then
-        log_verbose "Checking file paths in _governance.md..."
-
-        # Extract inline code file paths (backtick-wrapped paths with . or /)
-        local broken_paths=0
-        while IFS= read -r path; do
-            [[ -z "$path" ]] && continue
-            # Skip non-path references (commands, etc.)
-            if ! echo "$path" | grep -qE '[/.]'; then
-                continue
-            fi
-            if echo "$path" | grep -qE '^(lean-ctx |/opt/engine/)'; then
-                continue
-            fi
-
-            local resolved="$PROJECT_ROOT/$path"
-            # Handle .opencode/ paths — they're relative to project root
-            if [[ -f "$resolved" ]] || [[ -d "$resolved" ]]; then
-                log_verbose "  _governance.md: '$path' -> OK"
-            else
-                # Try without .opencode/ prefix (some paths use contract/ instead)
-                local alt_resolved="$PROJECT_ROOT/${path#.opencode/orchestration/}"
-                if [[ "$path" == ".opencode/orchestration/"* ]]; then
-                    # Map .opencode/orchestration/ -> contract/
-                    alt_resolved="$PROJECT_ROOT/contract/${path#.opencode/orchestration/}"
-                    if [[ -f "$alt_resolved" ]] || [[ -d "$alt_resolved" ]]; then
-                        log_verbose "  _governance.md: '$path' -> OK (via contract/)"
-                        continue
-                    fi
-                fi
-                broken_paths=$((broken_paths + 1))
-                log_fail "_governance.md: path '$path' does not resolve"
-                violations=$((violations + 1))
-            fi
-        done < <(grep -oP '`[^`]+`' "$gov_md" 2>/dev/null | sed 's/^`//;s/`$//' || true)
-
-        if [[ "$broken_paths" -eq 0 ]]; then
-            log_pass "All file paths in _governance.md resolve correctly"
-        fi
-    else
-        log_info "No _governance.md found — skipping path check"
     fi
 
     if [[ "$violations" -eq 0 ]]; then

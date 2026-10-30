@@ -9,7 +9,7 @@ description: Develops software by delegating bounded work to specialized subagen
 
 Subagent-Driven Development (SDD) is the discipline of splitting a task into independent units, delegating them to specialized subagents, and reconciling the results. It converts sequential work into parallel work — but **parallelism amplifies both speed and risk**. A sub-agent working on wrong assumptions produces bad output faster.
 
-This skill covers the full lifecycle: scope splitting → delegation → reconciliation → conflict resolution → quality gates → failure recovery. It is designed for the orchestrator (`@tech-lead`) to delegate to `@fixer`, `@explorer`, `@librarian`, and other subagents.
+This skill covers the full lifecycle: scope splitting → delegation → reconciliation → conflict resolution → quality gates → failure recovery. It is designed for the orchestrator (`@orchestrator`) to delegate to `@fixer`, `@explorer`, `@librarian`, and other subagents.
 
 ## When to Use
 
@@ -219,7 +219,7 @@ Before accepting any sub-agent's output, verify:
 
 ## Integration with Orchestrator Workflow
 
-This skill operates within the orchestrator's state machine (`tech-lead`):
+This skill operates within the orchestrator's state machine (`orchestrator`):
 
 ```text
 PLAN_SCORED ──→ EXECUTE ──→ [delegate phase] ──→ GATHER ──→ EXECUTE_SCORED

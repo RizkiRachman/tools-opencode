@@ -11,7 +11,7 @@
 
 - **Reads**: requirements.* (goal, constraints, acceptance criteria), governance.*, retry.issues[]
 - **Delegates to**: @product-manager (refine intent → GWT acceptance criteria, scope/non-goals) then @system-analyst (architecture analysis + implementation plan)
-- **Gate**: DDD fires here — tech-lead asks "What assumptions am I making about scope and constraints?" before delegating. If the task is complex (>3 files, cross-service, >30 min estimate), DDD may recommend expanding scope or requesting user clarification.
+- **Gate**: DDD fires here — orchestrator asks "What assumptions am I making about scope and constraints?" before delegating. If the task is complex (>3 files, cross-service, >30 min estimate), DDD may recommend expanding scope or requesting user clarification.
 - **Activity**: System-analyst runs ctx_impact on all affected symbols, traces execution flows, produces a structured plan with dependency graph, risk assessment, rollback strategy, task breakdown, and edge case analysis.
 - **Outputs**: state=PLAN, session.* (task_id, created_at), scope.* (included paths, excluded paths, parallel_eligible) populated
 - **Scoring threshold**: n/a (always advances to PLAN_SCORED for scoring)
@@ -20,7 +20,7 @@
 ### B1b. PLAN → PLAN_SCORED
 
 - **Reads**: outputs.plan, scope.*, requirements.*
-- **Delegates to**: @tech-lead (scoring pipeline — self-scored, not subagent)
+- **Delegates to**: @orchestrator (scoring pipeline — self-scored, not subagent)
 - **Activity**: Run Tier 1 rule checks (schema valid, permissions, blast radius, writing order, over-engineering, required fields) → Tier 2 LLM-as-Judge (requirements fulfillment, governance compliance, completeness, edge cases) → Tier 3 combined verdict
 - **Outputs**: state=PLAN_SCORED, score.* (rules subtotal, judge score, combined score, verdict), decisions.* (any refinements)
 - **Gate**: Score ≥ 70 → PASS advances to EXECUTE. 50-69 → RETRY — re-delegate to system-analyst with issues[]. <50 → BLOCKED.
@@ -50,8 +50,8 @@
 ### B1f. EXECUTE_SCORED → REVIEW [Gate: DDD]
 
 - **Reads**: outputs.code_changes[], outputs.test_results, outputs.plan (for scope comparison)
-- **Delegates to**: @tech-lead (scoring pipeline — self-scored)
-- **Gate**: DDD fires here — "What would I criticize about my own code?" Tech-lead runs an adversarial self-review before delegating to quality-analyst. If DDD reveals gaps, they are flagged in risks_introduced[] for the reviewer.
+- **Delegates to**: @orchestrator (scoring pipeline — self-scored)
+- **Gate**: DDD fires here — "What would I criticize about my own code?" Orchestrator runs an adversarial self-review before delegating to quality-analyst. If DDD reveals gaps, they are flagged in risks_introduced[] for the reviewer.
 - **Activity**: Score implementation (Tier 1 → Tier 2 → Tier 3). Pass ≥ 70 advances to REVIEW.
 - **Writes back**: state=REVIEW, score.* (updated with implementation score)
 
@@ -71,7 +71,7 @@
 ### B1h. REVIEW_SCORED → COMPLETE
 
 - **Reads**: outputs.agent_reports[], score.*, outputs.code_changes[], outputs.test_results
-- **Delegates to**: @tech-lead (score review findings) + @learner (post-exec analysis); @scrum-master enforces the Definition of Done before COMPLETE
+- **Delegates to**: @orchestrator (score review findings) + @learner (post-exec analysis); @scrum-master enforces the Definition of Done before COMPLETE
 - **Activity**: Score review (Tier 1 → Tier 2 → Tier 3). Score ≥ 70 → COMPLETE. The learner extracts lessons, identifies patterns and gotchas, persists knowledge_updates[] to lean-ctx ctx_knowledge.
 - **Outputs**: state=COMPLETE, lessons_learned[], metrics.* (cost_tokens, elapsed_ms, agents_used, phases_completed), knowledge_updates[]
 - **Writes back**: Full envelope to lean-ctx, archive snapshot via scripts/snapshot-contract.sh
@@ -80,10 +80,10 @@
 
 Doubt-Driven Development (DDD) subjects non-trivial decisions to adversarial review. It fires at 5 points across the lifecycle:
 
-1. **B1a** (INIT→PLAN) — "What assumptions am I making about scope and constraints?" Before delegating to system-analyst, the tech-lead challenges the task framing.
-2. **B1f** (EXECUTE_SCORED→REVIEW) — "What would I criticize about my own code?" Before review, the tech-lead runs an adversarial self-review of the implementation.
+1. **B1a** (INIT→PLAN) — "What assumptions am I making about scope and constraints?" Before delegating to system-analyst, the orchestrator challenges the task framing.
+2. **B1f** (EXECUTE_SCORED→REVIEW) — "What would I criticize about my own code?" Before review, the orchestrator runs an adversarial self-review of the implementation.
 3. **Before commit** — "What did I miss?" Developer runs DDD on every non-trivial change before committing (branches, cross-service calls, shared state modifications).
-4. **After review** — "Did the reviewer find what I expected?" After quality-analyst review, the tech-lead compares DDD predictions against actual findings.
+4. **After review** — "Did the reviewer find what I expected?" After quality-analyst review, the orchestrator compares DDD predictions against actual findings.
 5. **At BLOCKED** — "What assumption was wrong?" Every BLOCKED event triggers a root-cause challenge to avoid repeating the same failure.
 
 DDD triggers when: code introduces >2 branches (if/else, switch, try/catch), calls cross-module boundaries, modifies shared state, or sits in a hot path or transaction. Load via `/skill doubt-driven-development`.

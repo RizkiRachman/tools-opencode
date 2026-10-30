@@ -9,7 +9,7 @@ description: Monitors and audits state contract transitions, orchestration obser
 
 Audit Observability is a **vercel-labs/skills** compatible skill that enforces governance through state contract audit trails, orchestration transition observability, score analytics, and cross-service consistency checks. It is a **stepping stone** toward multi-repo / multi-agent / multi-model orchestration.
 
-This skill codifies the audit and observability patterns that the orchestrator (tech-lead) uses to track state machine transitions, detect anomalies, and ensure contract integrity across sessions and services.
+This skill codifies the audit and observability patterns that the orchestrator (orchestrator) uses to track state machine transitions, detect anomalies, and ensure contract integrity across sessions and services.
 
 ### Relationship to vercel-labs/skills Ecosystem
 
@@ -30,7 +30,7 @@ Every state transition **MUST** append an audit entry to `contract.audit_log[]`.
   "timestamp": "2026-06-17T10:00:00Z",
   "prev_state": "PLAN_SCORED",
   "new_state": "EXECUTE",
-  "triggered_by": "tech-lead",
+  "triggered_by": "orchestrator",
   "transition_reason": "Spec score ≥ 70 — proceeding to execution",
   "scoring_snapshot": {
     "combined": 82,
@@ -46,7 +46,7 @@ Every state transition **MUST** append an audit entry to `contract.audit_log[]`.
 | `timestamp` | Always | ISO-8601 UTC timestamp of the transition |
 | `prev_state` | Always | Previous state or `null` for INIT→PLAN |
 | `new_state` | Always | The state being transitioned to |
-| `triggered_by` | Always | Agent name (e.g., `tech-lead`, `system-analyst`) |
+| `triggered_by` | Always | Agent name (e.g., `orchestrator`, `system-analyst`) |
 | `transition_reason` | Always | Why the transition occurred |
 | `scoring_snapshot` | Optional | Present only when scoring was computed for this transition |
 
@@ -62,7 +62,7 @@ Every state transition **MUST** append an audit entry to `contract.audit_log[]`.
 
 ### Where to Append
 
-The `tech-lead` orchestrator appends audit entries in its post-transition hook, immediately after the contract state field is updated and before persistence:
+The `orchestrator` orchestrator appends audit entries in its post-transition hook, immediately after the contract state field is updated and before persistence:
 
 ```
 1. Update contract.state to new state
@@ -133,7 +133,7 @@ For reporting or analysis:
 lean-ctx ctx_knowledge recall --key "orchestration-contract" --mode "exact" | jq '.audit_log'
 
 # Filter by agent
-lean-ctx ctx_knowledge recall --key "orchestration-contract" --mode "exact" | jq '.audit_log[] | select(.triggered_by == "tech-lead")'
+lean-ctx ctx_knowledge recall --key "orchestration-contract" --mode "exact" | jq '.audit_log[] | select(.triggered_by == "orchestrator")'
 ```
 
 ---
@@ -382,11 +382,11 @@ if (contract.audit_log.length > 500) {
 
 ### Concurrent Writes
 
-All contract modifications are **serialized through the orchestrator** (tech-lead). No two agents write to the contract simultaneously. This prevents audit_log ordering issues.
+All contract modifications are **serialized through the orchestrator** (orchestrator). No two agents write to the contract simultaneously. This prevents audit_log ordering issues.
 
 - During parallel execution, agents submit results to the orchestrator
 - The orchestrator appends audit entries in a deterministic order
-- No agent other than tech-lead modifies `audit_log` directly
+- No agent other than orchestrator modifies `audit_log` directly
 
 ### Null prev_state (INIT→PLAN)
 
@@ -397,7 +397,7 @@ The INIT→PLAN transition is the first state change. Since there is no previous
   "timestamp": "2026-06-17T10:00:00Z",
   "prev_state": null,
   "new_state": "PLAN",
-  "triggered_by": "tech-lead",
+  "triggered_by": "orchestrator",
   "transition_reason": "Session created — delegating to system-analyst",
   "scoring_snapshot": {}
 }

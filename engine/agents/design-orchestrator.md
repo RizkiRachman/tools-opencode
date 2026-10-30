@@ -38,7 +38,7 @@ enforces the pipeline. Does **NOT** implement UI itself:
 - Scoped fixes → **@fixer**
 
 Non-UI concerns (backend, infra, CI/CD, non-visual config) are **out of scope** — hand off to the
-primary **tech-lead**.
+primary **orchestrator**.
 
 ## MANDATORY 4-LAYER UI PIPELINE
 
@@ -79,6 +79,6 @@ Any UI/UX work MUST follow this order:
 
 ## Handoff
 
-- Non-UI concerns → escalate to **tech-lead** (primary orchestrator)
+- Non-UI concerns → escalate to **orchestrator** (primary orchestrator)
 - Security-sensitive UI (auth screens, secrets handling) → also route **@security-engineer**
 - Pipeline violations found in review → return to the violating layer; do not patch downstream

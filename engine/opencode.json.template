@@ -59,7 +59,7 @@
       ],
       "mode": "primary"
     },
-    "tech-lead": {
+    "orchestrator": {
       "model": "opencode/big-pickle",
       "temperature": 0,
       "top_p": 1,
@@ -349,7 +349,7 @@
         "lean-ctx_*": "allow"
       }
     },
-    "ui-ux-tech-lead": {
+    "design-orchestrator": {
       "description": "UI/UX specialist orchestrator — enforces 4-layer design pipeline (Exemplar > Generator > Taste > Gate).",
       "mode": "primary",
       "model": "sumopod/glm-5.3-flash",

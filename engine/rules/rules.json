@@ -98,7 +98,7 @@
       },
       "governance_compliance": {
         "weight": 30,
-        "description": "Follows _governance.md rules"
+        "description": "Follows governance rules in agent.md §6 and rules.json"
       },
       "completeness": {
         "weight": 20,
@@ -206,11 +206,11 @@
       "state_agent_map": {
         "INIT": "product-manager",
         "PLAN": "system-analyst",
-        "PLAN_SCORED": "tech-lead",
+        "PLAN_SCORED": "orchestrator",
         "EXECUTE": "developer",
-        "EXECUTE_SCORED": "tech-lead",
+        "EXECUTE_SCORED": "orchestrator",
         "REVIEW": "quality-analyst",
-        "REVIEW_SCORED": "tech-lead",
+        "REVIEW_SCORED": "orchestrator",
         "COMPLETE": "learner",
         "BLOCKED": "scrum-master"
       },
@@ -227,11 +227,11 @@
       "phase_assignment": {
         "INIT": { "owner": "product-manager", "tier": "reviewer" },
         "PLAN": { "owner": "system-analyst", "tier": "executor" },
-        "PLAN_SCORED": { "owner": "tech-lead", "tier": "executor", "reviewers": ["software-architect"] },
+        "PLAN_SCORED": { "owner": "orchestrator", "tier": "executor", "reviewers": ["software-architect"] },
         "EXECUTE": { "owner": "developer", "tier": "executor" },
-        "EXECUTE_SCORED": { "owner": "tech-lead", "tier": "executor", "reviewers": ["software-architect"] },
+        "EXECUTE_SCORED": { "owner": "orchestrator", "tier": "executor", "reviewers": ["software-architect"] },
         "REVIEW": { "owner": "quality-analyst", "tier": "reviewer", "reviewers": ["security-engineer"] },
-        "REVIEW_SCORED": { "owner": "tech-lead", "tier": "executor" },
+        "REVIEW_SCORED": { "owner": "orchestrator", "tier": "executor" },
         "COMPLETE": { "owner": "learner", "tier": "executor" },
         "BLOCKED": { "owner": "scrum-master", "tier": "reviewer" }
       },
@@ -519,7 +519,7 @@
     }
   },
   "agent_states": {
-    "tech-lead": [
+    "orchestrator": [
       "*"
     ],
     "product-manager": [
@@ -592,7 +592,7 @@
       "security-engineer",
       "software-architect",
       "system-analyst",
-      "tech-lead"
+      "orchestrator"
     ]
   }
 }

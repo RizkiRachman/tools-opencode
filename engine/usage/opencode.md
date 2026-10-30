@@ -34,9 +34,9 @@ OpenCode is configured at **`opencode.json`** in the project root. Key configura
 
 | Setting | Value | Notes |
 |---------|-------|-------|
-| Default agent | `tech-lead` | Primary orchestrator |
+| Default agent | `orchestrator` | Primary orchestrator |
 | Model | executor `opencode/big-pickle` · reviewer `sumopod/deepseek-flash` | Per-agent model assignment (cross-model review) |
-| Agents | 15 custom agents (tech-lead + 14 subagents) | Defined in `opencode.json` |
+| Agents | 15 custom agents (orchestrator + 14 subagents) | Defined in `opencode.json` |
 | Format | JSON (not JSONC) | `opencode.json`, no comments |
 
 ### Architecture
@@ -104,7 +104,7 @@ Options include:
 
 OpenCode has two types:
 
-- **Primary agents** — switched via Tab key. Ours: `tech-lead` (the default).
+- **Primary agents** — switched via Tab key. Ours: `orchestrator` (the default).
 - **Subagents** — invoked by primary agents or via `@mention`. Ours: 14 subagents.
 
 ### 3.2 Built-in Agents (not in use)
@@ -117,7 +117,7 @@ OpenCode has two types:
 | `explore` | subagent | Read-only code exploration |
 | `scout` | subagent | External dependency research |
 
-This project replaces `build` as the default with `tech-lead` and defines 14 custom subagents.
+This project replaces `build` as the default with `orchestrator` and defines 14 custom subagents.
 
 ### 3.3 Our Custom Agents
 
@@ -125,7 +125,7 @@ Defined in `opencode.json` agent definitions + `.opencode/agents/*.md`:
 
 | Agent | Mode | Model | Steps | Temperature | Permission Pattern |
 |-------|------|-------|-------|-------------|-------------------|
-| **tech-lead** | primary | executor | 50 | 0 | skill=allow, everything else denied |
+| **orchestrator** | primary | executor | 50 | 0 | skill=allow, everything else denied |
 | **product-manager** | subagent | reviewer | 60 | 0 | skill=allow, read-only |
 | **scrum-master** | subagent | reviewer | 60 | 0 | skill=allow, read-only |
 | **system-analyst** | subagent | executor | 80 | 0 | skill=allow, read-only |

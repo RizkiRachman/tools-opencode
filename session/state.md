@@ -24,3 +24,4 @@
 - Files changed: engine/agent.md, engine/README.md, README.md, engine/agents/ui-ux-tech-lead.md, engine/opencode.json.template, engine/skills/lean-ctx/ (new), engine/skills/design-taste-frontend/ (renamed), session/state.md.
 - State: COMPLETE
 - Added `awesome-pr` skill + `.github/PULL_REQUEST_TEMPLATE.md`; skill count 64.
+- Renamed tech-lead -> orchestrator and ui-ux-tech-lead -> design-orchestrator repo-wide (agent files, config, template, rules.json, scripts, docs, skills); removed agents/_governance.md and its references (validate-toolkit.sh section 5b, scoring docs, rules.json).

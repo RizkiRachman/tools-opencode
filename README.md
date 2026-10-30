@@ -27,7 +27,7 @@ A self-hosted [opencode](https://opencode.ai) coding agent in Docker — TUI + w
 - **opencode web + TUI** — browser-based agent access, auth-protected, bound to localhost
 - **Workflow-state-engine** — `/opt/engine`: contract-driven multi-agent orchestration (plan → execute → review → ship) with scoring gates
 - **lean-ctx MCP** — compressed file reads, semantic search, impact analysis, cross-session knowledge
-- **4-layer UI/UX pipeline** — `design-exemplar` (84-brand reference library) → `ui-ux-pro-max` (BM25 design-system generator) → `design-taste-frontend` (art direction) → `impeccable` (UI slop-detector gate), enforced by the `ui-ux-tech-lead` agent
+- **4-layer UI/UX pipeline** — `design-exemplar` (84-brand reference library) → `ui-ux-pro-max` (BM25 design-system generator) → `design-taste-frontend` (art direction) → `impeccable` (UI slop-detector gate), enforced by the `design-orchestrator` agent
 - **Diagram engine** — `diagram-design` (45+ branded diagram types)
 - **Zscaler-safe builds** — drop your corporate CA in `certs/`, npm/git just work
 - **Model fallback** — automatic failover on rate limits, quota errors, and provider outages
@@ -143,7 +143,7 @@ Add a skill by dropping a directory under `engine/skills/<name>/SKILL.md`, rebui
 
 ### UI/UX pipeline
 
-UI tasks route through `ui-ux-tech-lead` (mode: primary), which enforces the mandatory layer order:
+UI tasks route through `design-orchestrator` (mode: primary), which enforces the mandatory layer order:
 
 | Layer | Skill | Use when |
 |-------|-------|----------|
