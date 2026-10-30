@@ -170,6 +170,9 @@ RUN --mount=type=cache,target=/home/node/.npm,sharing=locked,uid=1000,gid=1000 \
 # the layers below, not the package installs above.)
 ENV ENGINE_ROOT=/opt/engine
 
+# Engine transform needs root: removes root-owned files, chowns, sets exec bits
+USER root
+
 COPY engine/ /opt/engine/
 
 RUN set -eux; \
@@ -211,6 +214,9 @@ RUN set -eux; \
       /home/node/.config/opencode/usage; \
     ln -sfn /opt/engine/doc \
       /home/node/.config/opencode/doc
+
+# Drop back to the runtime user; nothing below needs root.
+USER node
 
 WORKDIR /home/node/workspace
 
