@@ -9,7 +9,7 @@ This part defines how every delegation is scored across 3 tiers, what validation
 
 ## D1. Scoring Pipeline
 
-The scoring pipeline runs after every delegation (PLAN, EXECUTE, REVIEW phases). It produces a combined verdict that determines whether the state advances, retries, or blocks. The scoring pipeline is self-scored by tech-lead — no subagent is involved.
+The scoring pipeline runs after every delegation (PLAN, EXECUTE, REVIEW phases). It produces a combined verdict that determines whether the state advances, retries, or blocks. The scoring pipeline is self-scored by orchestrator — no subagent is involved.
 
 ```
 Tier 1 — Rule-Based Checks (tool calls, no LLM)
@@ -26,7 +26,7 @@ Tier 1 — Rule-Based Checks (tool calls, no LLM)
 Tier 2 — LLM-as-Judge (always runs if Tier 1 completes)
   Score 0-100:
   - Fulfills requirements?  0-40  (matches acceptance criteria)
-  - Follows governance?     0-30  (compliance with _governance.md)
+  - Follows governance?     0-30  (compliance with agent.md §6 Non-Negotiable Rules)
   - Completeness?           0-20  (all tasks done, tests written)
   - Edge cases covered?     0-10  (nulls, errors, boundaries)
 
@@ -60,9 +60,9 @@ Source of truth: `rules/rules.json` §scoring.validation_gates. All threshold va
 
 ## D3. Governance
 
-Reference: `agents/_governance.md`
+Reference: `agent.md §6 (Non-Negotiable Rules)`
 
-The shared governance document defines rules all agents must follow:
+Governance rules all agents must follow:
 
 - **Permission boundaries** — what each agent role may and may not do (e.g., read-only agents never write code)
 - **Communication rules** — token efficiency, trade-off transparency, admission of unknowns
@@ -70,7 +70,7 @@ The shared governance document defines rules all agents must follow:
 - **Quality gates** — minimum scoring thresholds (≥70), validation criteria per phase
 - **Safety constraints** — never push to main/master, never force push, never edit without ctx_impact
 
-Agents source their governance rules from this file at session start. The orchestrator enforces governance compliance during Tier 2 scoring (0-30 points). When adding a new agent, add a governance section to `agents/_governance.md` with agent-specific rules, then reference it in the agent's instruction file.
+Agents source their governance rules from agent.md §6 and rules.json at session start. The orchestrator enforces governance compliance during Tier 2 scoring (0-30 points). When adding a new agent, add governance rules to the agent's instruction file.
 
 ---
 

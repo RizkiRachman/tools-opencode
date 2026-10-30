@@ -118,6 +118,8 @@ lean-ctx ctx_knowledge recall --key "orchestration-contract" --mode exact
 ### Session Setup
 
 The engine runs with a single `session/` directory — no branches required. Initialize or refresh session state with:
+> **LOCAL-ONLY:** `session/`, `.session/` and everything inside them are runtime state — NEVER `git add`, commit, or push them (gitignored; history grows unbounded). Archive historical state logs to `.session/` instead.
+
 
 ```sh
 bash /opt/engine/scripts/snapshot-contract.sh          # Seed/refresh session/contract.json + state.md
@@ -134,14 +136,14 @@ Every task follows this sequence:
 | Phase | Agent | Gate |
 |-------|-------|------|
 | **Refine** | @product-manager | Intent → GWT acceptance criteria, scope + non-goals |
-| **Discuss** | Tech lead (5-lens check) | Requirements clarified |
+| **Discuss** | Orchestrator (5-lens check) | Requirements clarified |
 | **Plan** | @system-analyst (+ @software-architect review) | Impact analysis + plan produced |
 | **Spec** (gate) | @system-analyst | GWT-format specs, DDD review |
 | **Execute** | @developer (+ @devops-engineer, @fixer) | Implementation + tests |
 | **Review** | @quality-analyst + @security-engineer (cross-model) | Code quality, security, DevOps |
 | **Process** | @scrum-master | Transitions legal, DoD met, unblock BLOCKED |
 | **Verify** | Quality gates | Validated JSON, conventions check |
-| **Ship** | Tech lead (+ @learner) | Post-flight protocol, lessons captured |
+| **Ship** | Orchestrator (+ @learner) | Post-flight protocol, lessons captured |
 
 ### Key Commands
 
@@ -183,8 +185,8 @@ The engine source lives under `engine/` and is copied to `/opt/engine/` at conta
 engine/
 ├── agent.md           ← Orchestrator instructions (instructions[0])
 ├── AGENTS.md          ← lean-ctx code intelligence (loaded at session start)
-├── agents/            ← 15 agent instruction files (+ _governance.md)
-├── skills/            ← 50 skill directories
+├── agents/            ← 16 agent instruction files
+├── skills/            ← 64 skill directories
 ├── contract/          ← Contract templates & schema (contract.template.json, contract.schema.json, state.template.md)
 ├── rules/             ← State machine transitions, scoring, cross-model review
 ├── usage/             ← Tool usage guides (lean-ctx, graphify, context7, opencode)
@@ -204,7 +206,7 @@ engine/
 ### Agent Delegation Model
 
 ```
-Orchestrator (tech-lead)
+Orchestrator (orchestrator)
   ├── @product-manager  → Requirements & acceptance criteria (read-only, reviewer model)
   ├── @system-analyst   → Planning & impact analysis (read-only)
   ├── @software-architect → Architecture review (read-only, reviewer model)
@@ -219,7 +221,7 @@ Orchestrator (tech-lead)
   └── @learner          → Post-execution learning
 ```
 
-**Cross-model review**: executors run on the executor model (`opencode/big-pickle`); reviewers (@product-manager, @software-architect, @quality-analyst, @security-engineer, @scrum-master) run on an independent reviewer model (`sumopod/deepseek-v4-flash`). Conflicting verdicts → `BLOCKED`, arbitrated by @council.
+**Cross-model review**: executors run on the executor model (`opencode/big-pickle`); reviewers (@product-manager, @software-architect, @quality-analyst, @security-engineer, @scrum-master) run on an independent reviewer model (`sumopod/deepseek-flash`). Conflicting verdicts → `BLOCKED`, arbitrated by @council.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 
@@ -269,7 +271,6 @@ Three-tier scoring runs after every delegation:
 - [x] Architecture convention checking (scripts/check-conventions.sh — agent paths, JSON schema, forbidden patterns, state.md sync)
 - [x] Toolkit integrity validation (scripts/validate-toolkit.sh — symlinks, contract integrity, agent consistency, cross-references)
 - [x] Session archival (scripts/archive-sessions.sh — days-based cleanup with dry-run/restore)
-- [x] Shared governance document (agents/_governance.md — contract protocol, permissions, frugality, post-flight)
 - [x] JSON Schema enforcement (contract/contract.schema.json — Draft 2020-12, $defs, numeric constraints, valid states)
 - [x] CI/CD governance pipeline (.github/workflows/governance.yml — conventions, schema, toolkit validation)
 - [x] Token budget enforcement (token_budget in contract.json + TOKEN_001-004 in rules.json)
@@ -285,7 +286,7 @@ Three-tier scoring runs after every delegation:
 - [x] Knowledge vs file drift detection (scripts/drift-detect.sh)
 - [x] SDD spec gate enforcement (scripts/sdd-gate.sh)
 - [x] Knowledge persistence verification (scripts/verify-knowledge.sh)
-- [x] Cross-session learning feedback loop (agents/tech-lead.md, learner.md)
+- [x] Cross-session learning feedback loop (agents/orchestrator.md, learner.md)
 
 See the [open issues](https://github.com/RizkiRachman/workflow-state-engine/issues) for a full list of proposed features and known issues.
 

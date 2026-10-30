@@ -27,7 +27,7 @@ A self-hosted [opencode](https://opencode.ai) coding agent in Docker — TUI + w
 - **opencode web + TUI** — browser-based agent access, auth-protected, bound to localhost
 - **Workflow-state-engine** — `/opt/engine`: contract-driven multi-agent orchestration (plan → execute → review → ship) with scoring gates
 - **lean-ctx MCP** — compressed file reads, semantic search, impact analysis, cross-session knowledge
-- **4-layer UI/UX pipeline** — `design-exemplar` (84-brand reference library) → `ui-ux-pro-max` (BM25 design-system generator) → `design-taste-frontend` (art direction) → `impeccable` (UI slop-detector gate), enforced by the `ui-ux-tech-lead` agent
+- **4-layer UI/UX pipeline** — `design-exemplar` (84-brand reference library) → `ui-ux-pro-max` (BM25 design-system generator) → `design-taste-frontend` (art direction) → `impeccable` (UI slop-detector gate), enforced by the `design-orchestrator` agent
 - **Diagram engine** — `diagram-design` (45+ branded diagram types)
 - **Zscaler-safe builds** — drop your corporate CA in `certs/`, npm/git just work
 - **Model fallback** — automatic failover on rate limits, quota errors, and provider outages
@@ -52,18 +52,21 @@ cat > .env <<'ENV'
 OPENCODE_API_KEY=your-key
 SUMOPOD_API_KEY=your-key
 SUMOPOD_BASE_URL=https://ai.sumopod.com/v1
-SUMOPOD_BASE_MODEL=sumopod/deepseek-v4-flash
-SUMOPOD_BASE_MODEL_NAME=deepseek-v4-flash
+SUMOPOD_BASE_MODEL=sumopod/glm-5.3-flash
+SUMOPOD_BASE_MODEL_NAME=glm-5.3-flash
 CONTEXT7_API_KEY=your-key
 ENV
 
 # 3. (Corporate proxy) add CA cert
 cp ~/corporate-ca.crt opencode/certs/
 
-# 4. Build & run
-docker compose -f docker-compose.example.yaml build opencode
-docker compose -f docker-compose.example.yaml up -d opencode
+# 4. Populate the offline pre-install store (throwaway node:22 container;
+#    see "Offline builds" below), then build & run:
+docker compose -f docker-compose.example.yaml run --rm populate
+docker compose -f docker-compose.example.yaml up -d --build
 ```
+
+> Using your own compose file (e.g. workspace root with the repo in `opencode/` subdir)? Point `-f` at it — or set `COMPOSE_FILE`.
 
 Open **http://localhost:4096**.
 
@@ -127,7 +130,7 @@ opencode/
 │   └── opencode-model-fallback.json
 ├── engine/                        # workflow-state-engine → /opt/engine in image
 │   ├── agents/                    # 16 scrum-team agent definitions
-│   ├── skills/                    # 65+ skills (incl. full UI/UX pipeline: design-exemplar, ui-ux-pro-max, impeccable)
+│   ├── skills/                    # 64 skills (incl. full UI/UX pipeline: design-exemplar, ui-ux-pro-max, impeccable)
 │   └── commands/                  # slash commands
 └── session/                       # orchestration state (contract.json, archive/)
 ```
@@ -143,7 +146,7 @@ Add a skill by dropping a directory under `engine/skills/<name>/SKILL.md`, rebui
 
 ### UI/UX pipeline
 
-UI tasks route through `ui-ux-tech-lead` (mode: primary), which enforces the mandatory layer order:
+UI tasks route through `design-orchestrator` (mode: primary), which enforces the mandatory layer order:
 
 | Layer | Skill | Use when |
 |-------|-------|----------|
@@ -155,6 +158,49 @@ UI tasks route through `ui-ux-tech-lead` (mode: primary), which enforces the man
 Trivial tweaks (<10 lines, no new components) may skip layers 1–2, never layer 4.
 
 The uipro CLI bundle also ships companion skills: `banner-design`, `brand`, `design`, `design-system`, `slides`, `ui-styling`.
+
+## Offline builds (pre-install store)
+
+`pre-install/` is a local, gitignored package store that lets
+`docker compose up -d --build` stop re-downloading packages. The `populate`
+compose service fills the store once before the first build (see
+[Quick Start](#quick-start)):
+
+- **Populate runs in a throwaway stock `node:22-bookworm-slim` container** —
+  the `populate` compose service (profile `tools`) — so the store can be
+  filled before the custom image exists, fixing the first-run
+  chicken-and-egg problem. Populate is idempotent: re-runs fetch only
+  what is missing.
+- **Builds then install offline-first**: Docker cache mounts plus the
+  store's npm tarballs, pip wheels, and lean-ctx binary. Anything absent
+  still falls back to the network, so builds never break on a fresh
+  checkout.
+- **The store is portable**: it lives in the workspace, so copying the
+  workspace to another machine carries the store with it. Its contents are
+  gitignored (`pre-install/**` except `.gitkeep`) and are never committed
+  or pushed.
+
+**Alternative** — once the custom image is already built, you can still
+populate from inside the running container (root is only needed for the
+apt section):
+
+    docker compose exec -u root opencode sh populate-preinstall.sh
+
+**Store layout** — every artifact type follows the same skip-if-exists pattern:
+`populate-preinstall.sh` checks the marker (tarball, wheel, binary, `.deb`,
+clone dir, zip) and fetches only what is missing. The `git/` and `dist/`
+sections are wired in the script and reserved for future artifacts installed
+from a git clone or a direct download — they follow the same
+`fetch_if_missing` pattern.
+
+| Directory | Contents |
+|-----------|----------|
+| `pre-install/npm/` | npm tarballs (`npm pack`) for opencode, MCP servers, and plugins |
+| `pre-install/pip/` | pip wheels — full dependency closure of `graphifyy[mcp]`, `mcp<2`, `mcp-server-fetch` |
+| `pre-install/bin/` | release binaries (`lean-ctx`) |
+| `pre-install/apt/` | `.deb` closure of the base apt packages (populated as root) |
+| `pre-install/git/` | shallow git clones (reserved — future git-sourced artifacts) |
+| `pre-install/dist/` | zips / tarballs / direct downloads (reserved — future URL-fetched artifacts) |
 
 ## Troubleshooting
 

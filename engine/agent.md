@@ -66,8 +66,8 @@ INIT → PLAN → PLAN_SCORED → EXECUTE → EXECUTE_SCORED → REVIEW → REVI
 ### Architecture
 
 ```
-agents/     → 16 agent instruction files (tech-lead, product-manager, scrum-master, developer, devops-engineer, quality-analyst, security-engineer, …)
-skills/     → 50 skill directories (system-analyst, writing-plans, spec-driven-development, …)
+agents/     → 16 agent instruction files (orchestrator, product-manager, scrum-master, developer, devops-engineer, quality-analyst, security-engineer, …)
+skills/     → 64 skill directories (system-analyst, writing-plans, spec-driven-development, …)
 contract/   → contract.template.json, contract.schema.json, state.template.md
 rules/      → rules.json (state machine transitions, scoring thresholds, cross-model review)
 doc/        → workflow guides, project.md, gap analysis, reports
@@ -89,7 +89,7 @@ The engine ships inside the container image (`COPY engine/ /opt/engine/`) and is
    ├── opencode.json → (bind-mounted) config/opencode.json
    ├── agent.md   → /opt/engine/agent.md      (instructions[0])
    ├── /opt/engine/agents/    → /opt/engine/agents/        16 agent instruction files
-   ├── /opt/engine/skills/    → /opt/engine/skills/        50 skill directories
+   ├── /opt/engine/skills/    → /opt/engine/skills/        64 skill directories
    ├── /opt/engine/rules/     → /opt/engine/rules/         rules.json (state machine)
    ├── /opt/engine/contract/  → /opt/engine/contract/      contract.template.json, contract.schema.json, state.template.md
    ├── /opt/engine/usage/     → /opt/engine/usage/         4 tool usage guides
@@ -106,10 +106,10 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 ├── agent.md           ← THIS FILE (instructions[0])
 ├── AGENTS.md          ← lean-ctx code intelligence (loaded at session start)
 ├── README.md          ← Project overview (diagram, badges)
-├── /opt/engine/agents/            ← 16 agent instruction files (+ _governance.md)
+├── /opt/engine/agents/            ← 16 agent instruction files
 ├── /opt/engine/doc/               ← Workflow guides, project.md, reports
 ├── /opt/engine/rules/             ← rules.json (state machine, scoring, cross-model review)
-├── /opt/engine/skills/            ← 50 skill directories
+├── /opt/engine/skills/            ← 64 skill directories
 ├── /opt/engine/contract/          ← contract.template.json, contract.schema.json, state.template.md
 ├── /opt/engine/usage/             ← 4 tool usage guides
 └── /opt/engine/scripts/           ← Automation & validation scripts
@@ -123,14 +123,14 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 
 > Full agent instruction files at `/opt/engine/agents/` (symlinked into the OpenCode config dir). Each file defines role, MCPs, skills, and post-flight protocol.
 >
-> **Model tiers**: `executor` = `opencode/big-pickle`; `reviewer` = `sumopod/deepseek-v4-flash` (independent model). Reviewers never share the executor's model — this is the basis of **cross-model review**.
+> **Model tiers**: `executor` = `opencode/big-pickle`; `reviewer` = `sumopod/deepseek-flash` (independent model). Reviewers never share the executor's model — this is the basis of **cross-model review**.
 
 ### Orchestrator
 
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
-| **tech-lead** | Scrum lead / primary orchestrator — delegates, scores, drives the state machine | lean-ctx, graphify, context7 | Read/write | `*` (all) | executor | (orchestrator — agent.md) | `/opt/engine/agents/tech-lead.md` |
-| **ui-ux-tech-lead** | UI/UX specialist orchestrator — enforces 4-layer design pipeline (Exemplar > Generator > Taste > Gate) | lean-ctx, graphify, context7 | Read/write | `*` (all) | executor | design-exemplar, ui-ux-pro-max, design-taste-frontend, impeccable | `/opt/engine/agents/ui-ux-tech-lead.md` |
+| **orchestrator** | Scrum lead / primary orchestrator — delegates, scores, drives the state machine | lean-ctx, graphify, context7 | Read/write | `*` (all) | executor | (orchestrator — agent.md) | `/opt/engine/agents/orchestrator.md` |
+| **design-orchestrator** | UI/UX specialist orchestrator — enforces 4-layer design pipeline (Exemplar > Generator > Taste > Gate) | lean-ctx, graphify, context7 | Read/write | `*` (all) | executor | design-exemplar, ui-ux-pro-max, design-taste-frontend, impeccable | `/opt/engine/agents/design-orchestrator.md` |
 
 ### Product & Planning Agents (read-only)
 
@@ -152,7 +152,7 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
-| **quality-analyst** | Independent quality review (5-axis: correctness, readability, architecture, security, performance) | lean-ctx, postgres | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | qa-expert, security-expert, code-review-and-quality, impeccable | `/opt/engine/agents/quality-analyst.md` |
+| **quality-analyst** | Independent quality review (5-axis: correctness, readability, architecture, security, performance) | lean-ctx | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | qa-expert, security-expert, code-review-and-quality, impeccable | `/opt/engine/agents/quality-analyst.md` |
 | **security-engineer** | Independent security review — threat model, vulns, secrets, trust boundaries | lean-ctx | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | security-expert, code-review-and-quality | `/opt/engine/agents/security-engineer.md` |
 | **scrum-master** | Process owner — guards the contract, state machine, and workflow; unblocks BLOCKED, DoD gate | lean-ctx, graphify | Read-only | `*` (all), `BLOCKED` | reviewer | orchestration-template, audit-observability, adaptive-solver | `/opt/engine/agents/scrum-master.md` |
 | **learner** | Post-execution retro — extract lessons, gotchas, patterns | lean-ctx | Read-only | `REVIEW_SCORED`, `COMPLETE` | executor | verification-before-completion | `/opt/engine/agents/learner.md` |
@@ -264,7 +264,7 @@ Run this ladder in order before writing ANY code:
 
 ### UI/UX Pipeline (Mandatory)
 
-All UI work runs the 4-layer pipeline in this order — enforced by @ui-ux-tech-lead:
+All UI work runs the 4-layer pipeline in this order — enforced by @design-orchestrator:
 
 | # | Layer | Skill | Role |
 |---|-------|-------|------|
@@ -300,6 +300,8 @@ Exceptions: docs-only changes skip 1, 2, 4. Config-only skip 1, 2.
 ### Save Session Protocol
 
 When the user says "save session" or a phase completes, save to **ALL** systems:
+> **LOCAL-ONLY:** `session/`, `.session/` and everything inside them are runtime state — NEVER `git add`, commit, or push them (gitignored; history grows unbounded). Archive historical state logs to `.session/` instead.
+
 
 ```bash
 # 1. Persist orchestration envelope to lean-ctx knowledge
@@ -338,6 +340,8 @@ lean-ctx ctx_session save
 ### Session Lifecycle Protocol
 
 Every orchestration session persists contract state to the `session/` directory for cross-session traceability and safe resumption.
+> **LOCAL-ONLY:** `session/`, `.session/` and everything inside them are runtime state — NEVER `git add`, commit, or push them (gitignored; history grows unbounded). Archive historical state logs to `.session/` instead.
+
 
 #### Directory Layout
 
@@ -345,7 +349,7 @@ Every orchestration session persists contract state to the `session/` directory 
 session/
 ├── contract.json         ← Live orchestration contract (single source of truth)
 ├── contract.schema.json  ← Schema for the contract
-├── state.md              ← Append-only chronological state log
+├── state.md              ← Append-only chronological state log (LOCAL-ONLY, gitignored)
 └── archive/              ← Timestamped snapshots (audit trail)
 ```
 
@@ -385,7 +389,7 @@ See [orchestration-template skill](/opt/engine/skills/orchestration-template/SKI
 - **Never commit secrets, credentials, tokens, `.env` files**
 
 ### Cross-Model Review
-- **Reviewers must run on a different model than the executor** they audit — executor `opencode/big-pickle` vs reviewer `sumopod/deepseek-v4-flash`
+- **Reviewers must run on a different model than the executor** they audit — executor `opencode/big-pickle` vs reviewer `sumopod/deepseek-flash`
 - **Conflicting reviewer verdicts** (PASS vs BLOCK) → `BLOCKED`, arbitrated by `@council` (see `rules.json → enforcement.cross_model_review`)
 - **Security-sensitive changes** (auth, secrets, credentials, config, crypto) auto-require `@security-engineer` review
 
@@ -469,7 +473,15 @@ All skills at `/opt/engine/skills/` (symlinked into the OpenCode config dir). Us
 | `slides` | Strategic HTML presentations with Chart.js, design tokens, responsive layouts (companion of ui-ux-pro-max) |
 | `ui-styling` | shadcn/ui + Tailwind + canvas-based UI styling, accessible components, theming (companion of ui-ux-pro-max) |
 | `awesome-readme` | README/docs standard — badges, TOC, quick start, config tables, architecture notes (distilled from matiassingers/awesome-readme) |
-| `lean-ctx-{exploring,impact,debug,refactor,cli,guide}` | lean-ctx-specific workflows |
+| `awesome-pr` | Pull request authoring — Conventional Commit titles, description template, review checklist, small-PR sizing |
+| `commit` | Conventional commits, atomic commits, commit message best practices |
+| `gradle-test-runner` | Gradle test execution, filtering, parallel runs, test configuration |
+| `ralph-coverage` | Ralph coverage analysis, test gap detection, coverage insights |
+| `rebase-commit` | Interactive rebase, squash, commit cleanup, history management |
+| `restart-spring-boot` | Spring Boot restart and hot-reload patterns for development |
+| `shipping-and-launch` | End-to-end release orchestration — pre-launch verification, canary rollout, rollback planning, post-deploy smoke tests |
+| `spec` | Specification writing, requirements documentation, acceptance criteria |
+| `lean-ctx` | LeanCTX Context Gateway — select task-relevant context, apply controls, reuse local knowledge, inspect recorded evidence |
 
 *Last updated: 2026-10-30. If you modify conventions, workflows, or config, update this file.*
 

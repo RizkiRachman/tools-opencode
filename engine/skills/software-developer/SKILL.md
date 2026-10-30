@@ -233,7 +233,7 @@ Keep ADRs under `docs/adr/` with sequential numbering (`0001-use-spring-boot.md`
 | `README.md` | New dependency, changed build steps, new service domain | Developer |
 | `ARCHITECTURE_HYBRID.md` | Changed system topology, added event flow, new integration | Software Architect |
 | `CHANGELOG.md` | Every release (`## [X.Y.Z] - YYYY-MM-DD` with links to PRs) | Developer |
-| `docs/adr/*.md` | Significant decision (see table above) | Tech Lead / Architect |
+| `docs/adr/*.md` | Significant decision (see table above) | Orchestrator / Architect |
 | `docs/diagrams/*.puml` | Port/interface changes, new adapters | Developer |
 | `docs/planning/*.md` | Before execution phase begins | System Analyst |
 
