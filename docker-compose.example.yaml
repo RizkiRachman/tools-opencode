@@ -6,8 +6,10 @@ services:
       bpg.type: agents
     build:
       context: ./opencode
+      additional_contexts:
+        preinstall: ./pre-install
       args:
-        OPENCODE_VERSION: "latest"  # or "1.19.0" if you want to pin
+        OPENCODE_VERSION: "1.19.0"  # pinned for reproducible builds
         GRAPHIFY_VERSION: "0.8.49"
         LEAN_CTX_VERSION: "3.10.2"  # Added missing arg
         CONTEXT7_VERSION: "4.4.1"

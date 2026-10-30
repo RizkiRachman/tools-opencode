@@ -3,3 +3,7 @@
 .session/
 session/*
 !session/state.example.md
+
+pre-install/**
+!pre-install/**/
+!pre-install/**/.gitkeep

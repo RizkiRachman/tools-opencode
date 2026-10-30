@@ -156,6 +156,29 @@ Trivial tweaks (<10 lines, no new components) may skip layers 1–2, never layer
 
 The uipro CLI bundle also ships companion skills: `banner-design`, `brand`, `design`, `design-system`, `slides`, `ui-styling`.
 
+## Offline builds (pre-install store)
+
+`pre-install/` is a local, gitignored package store that lets
+`docker compose up -d --build` stop re-downloading packages. Populate it once
+(root is only needed for the apt section; re-runs fetch only what is missing):
+
+    docker compose exec -u root opencode sh populate-preinstall.sh
+
+After that, builds install offline-first: Docker cache mounts plus the
+store's npm tarballs, pip wheels, and lean-ctx binary. Anything absent still
+falls back to the network, so builds never break on a fresh checkout.
+
+The store is portable: it lives in the workspace, so copying the workspace to
+another machine carries the store with it. Its contents are gitignored
+(`pre-install/**` except `.gitkeep`) and are never committed or pushed.
+
+| Directory | Contents |
+|-----------|----------|
+| `pre-install/npm/` | npm tarballs (`npm pack`) for opencode, MCP servers, and plugins |
+| `pre-install/pip/` | pip wheels — full dependency closure of `graphifyy[mcp]`, `mcp<2`, `mcp-server-fetch` |
+| `pre-install/bin/` | `lean-ctx` binary |
+| `pre-install/apt/` | `.deb` files for the base apt packages (populated as root) |
+
 ## Troubleshooting
 
 | Symptom | Fix |
