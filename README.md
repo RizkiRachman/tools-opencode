@@ -172,12 +172,21 @@ The store is portable: it lives in the workspace, so copying the workspace to
 another machine carries the store with it. Its contents are gitignored
 (`pre-install/**` except `.gitkeep`) and are never committed or pushed.
 
+**Store layout** — every artifact type follows the same skip-if-exists pattern:
+`populate-preinstall.sh` checks the marker (tarball, wheel, binary, `.deb`,
+clone dir, zip) and fetches only what is missing. The `git/` and `dist/`
+sections are wired in the script and reserved for future artifacts installed
+from a git clone or a direct download — they follow the same
+`fetch_if_missing` pattern.
+
 | Directory | Contents |
 |-----------|----------|
 | `pre-install/npm/` | npm tarballs (`npm pack`) for opencode, MCP servers, and plugins |
 | `pre-install/pip/` | pip wheels — full dependency closure of `graphifyy[mcp]`, `mcp<2`, `mcp-server-fetch` |
-| `pre-install/bin/` | `lean-ctx` binary |
-| `pre-install/apt/` | `.deb` files for the base apt packages (populated as root) |
+| `pre-install/bin/` | release binaries (`lean-ctx`) |
+| `pre-install/apt/` | `.deb` closure of the base apt packages (populated as root) |
+| `pre-install/git/` | shallow git clones (reserved — future git-sourced artifacts) |
+| `pre-install/dist/` | zips / tarballs / direct downloads (reserved — future URL-fetched artifacts) |
 
 ## Troubleshooting
 

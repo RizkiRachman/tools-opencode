@@ -6,8 +6,10 @@
 # committed or pushed. The store is portable - copy the workspace to another
 # machine and the store comes with it.
 #
-# Idempotent: everything already present is skipped, so re-runs fetch only
-# what is missing. Root is required only for the apt section.
+# Idempotent: every artifact follows the same skip-if-exists pattern - when
+# its marker (tarball, wheel, binary, deb, clone dir, zip) is already in the
+# store, the fetch is skipped, so re-runs fetch only what is missing. Root is
+# required only for the apt section. Store sections: npm pip bin apt git dist.
 set -eu
 
 # Versions - must match the Dockerfile ARG defaults (env-overridable).
@@ -23,7 +25,8 @@ DCP_VERSION=3.2.0             # @tarquinen/opencode-dcp
 WEBSEARCH_VERSION=1.2.0       # opencode-websearch-cited
 
 STORE_DIR=$(cd "$(dirname "$0")" && pwd)/pre-install
-mkdir -p "$STORE_DIR/npm" "$STORE_DIR/pip" "$STORE_DIR/bin" "$STORE_DIR/apt"
+mkdir -p "$STORE_DIR/npm" "$STORE_DIR/pip" "$STORE_DIR/bin" "$STORE_DIR/apt" \
+  "$STORE_DIR/git" "$STORE_DIR/dist"
 
 ADDED=0
 SKIPPED=0
@@ -37,6 +40,30 @@ mark_skipped() {
   SKIPPED=$((SKIPPED + 1))
   echo "  skipped: $1"
 }
+
+# Generic skip-if-exists guard for one store artifact.
+#
+#   fetch_if_missing MARKER CMD [ARG...]
+#
+# MARKER is a file (e.g. a downloaded zip) or a directory (e.g. a git clone);
+# it counts as present when it exists as a file or holds at least one entry
+# as a directory. Present -> return 1 so the caller can report a skip;
+# absent -> run CMD with the remaining arguments. Multi-step fetches pass a
+# shell function as CMD (POSIX sh has no arrays, so commands are dispatched
+# through "$@"). A failed fetch stays fatal: set -e is suspended in an
+# if-condition, so a nonzero CMD status is turned into an explicit exit.
+fetch_if_missing() {
+  marker=$1
+  shift
+  if [ -e "$marker" ] && { [ -f "$marker" ] || [ -n "$(ls -A "$marker" 2>/dev/null)" ]; }; then
+    return 1
+  fi
+  "$@" || exit $?
+}
+
+# --------------------------------------------------------------------------
+# npm - one tarball per package.
+# --------------------------------------------------------------------------
 
 # True when a tarball for the package (any version) is already in the store.
 # npm pack writes scoped packages as '@scope+name-<version>.tgz'.
@@ -74,6 +101,10 @@ npm_maybe_pack "@razroo/opencode-model-fallback@${MODEL_FALLBACK_VERSION}"
 npm_maybe_pack "@tarquinen/opencode-dcp@${DCP_VERSION}"
 npm_maybe_pack "opencode-websearch-cited@${WEBSEARCH_VERSION}"
 
+# --------------------------------------------------------------------------
+# pip - full wheel closure.
+# --------------------------------------------------------------------------
+
 # True when at least one wheel is already in the store.
 pip_wheels_present() {
   for f in "$STORE_DIR"/pip/*.whl; do
@@ -84,12 +115,9 @@ pip_wheels_present() {
   return 1
 }
 
-echo "==> python wheels (full closure)"
-if pip_wheels_present; then
-  mark_skipped "pip wheels (already in store)"
-else
-  # The container ships pipx but NOT python3-pip; prefer the graphifyy
-  # venv's pip and fall back to python3 -m pip (e.g. on a dev host).
+# The container ships pipx but NOT python3-pip; prefer the graphifyy venv's
+# pip and fall back to python3 -m pip (e.g. on a dev host).
+fetch_pip_wheels() {
   if [ -x /opt/pipx/venvs/graphifyy/bin/pip ]; then
     /opt/pipx/venvs/graphifyy/bin/pip download --dest "$STORE_DIR/pip" \
       "graphifyy[mcp]==${GRAPHIFY_VERSION}" "mcp<2" mcp-server-fetch
@@ -97,13 +125,22 @@ else
     python3 -m pip download --dest "$STORE_DIR/pip" \
       "graphifyy[mcp]==${GRAPHIFY_VERSION}" "mcp<2" mcp-server-fetch
   fi
+}
+
+echo "==> python wheels (full closure)"
+if pip_wheels_present; then
+  mark_skipped "pip wheels (already in store)"
+else
+  fetch_pip_wheels
   mark_added "pip wheels: graphifyy[mcp]==${GRAPHIFY_VERSION}, mcp<2, mcp-server-fetch"
 fi
 
-echo "==> lean-ctx binary"
-if [ -f "$STORE_DIR/bin/lean-ctx" ]; then
-  mark_skipped "lean-ctx ${LEAN_CTX_VERSION} (binary already in store)"
-else
+# --------------------------------------------------------------------------
+# bin - release binaries.
+# --------------------------------------------------------------------------
+
+# Fetch the lean-ctx release binary via its install script.
+fetch_lean_ctx() {
   HOME=$(mktemp -d)
   curl -fsSL \
     "https://raw.githubusercontent.com/yvgude/lean-ctx/v${LEAN_CTX_VERSION}/install.sh" \
@@ -112,10 +149,20 @@ else
   cp "$HOME/.local/bin/lean-ctx" "$STORE_DIR/bin/lean-ctx"
   chmod 0755 "$STORE_DIR/bin/lean-ctx"
   rm -rf "$HOME"
+}
+
+echo "==> lean-ctx binary"
+if fetch_if_missing "$STORE_DIR/bin/lean-ctx" fetch_lean_ctx; then
   mark_added "lean-ctx ${LEAN_CTX_VERSION}"
+else
+  mark_skipped "lean-ctx ${LEAN_CTX_VERSION} (binary already in store)"
 fi
 
-echo "==> apt debs (root only)"
+# --------------------------------------------------------------------------
+# apt - .deb closure (root only).
+# --------------------------------------------------------------------------
+
+# True when at least one .deb is already in the store.
 apt_debs_present() {
   for f in "$STORE_DIR"/apt/*.deb; do
     if [ -e "$f" ]; then
@@ -125,20 +172,63 @@ apt_debs_present() {
   return 1
 }
 
+fetch_apt_debs() {
+  mkdir -p "$STORE_DIR/apt/partial"
+  apt-get update
+  apt-get install --reinstall --download-only -y --no-install-recommends \
+    -o Dir::Cache::archives="$STORE_DIR/apt" \
+    git curl jq ripgrep ca-certificates python3 pipx python3-venv coreutils procps
+}
+
+echo "==> apt debs (root only)"
 if [ "$(id -u)" -eq 0 ]; then
   if apt_debs_present; then
     mark_skipped "apt debs (already in store)"
   else
-    mkdir -p "$STORE_DIR/apt/partial"
-    apt-get update
-    apt-get install --reinstall --download-only -y --no-install-recommends \
-      -o Dir::Cache::archives="$STORE_DIR/apt" \
-      git curl jq ripgrep ca-certificates python3 pipx python3-venv coreutils procps
+    fetch_apt_debs
     mark_added "apt debs"
   fi
 else
   echo "  apt section skipped - re-run with: docker compose exec -u root opencode sh populate-preinstall.sh"
 fi
 
+# --------------------------------------------------------------------------
+# git/ - shallow clones of git-sourced artifacts (reserved for future use).
+#
+# Pattern: the marker is the clone directory; the clone is skipped while it
+# holds at least one entry (an empty or partial clone refetches):
+#
+#   fetch_if_missing "$STORE_DIR/git/<name>" \
+#     git clone --depth 1 <url> "$STORE_DIR/git/<name>"
+#
+# Working example (uncomment and fill in when a git-sourced artifact is
+# needed; wrap with if/else + mark_added/mark_skipped to keep counts):
+#
+#   echo "==> git clones"
+#   # fetch_if_missing "$STORE_DIR/git/example-repo" \
+#   #   git clone --depth 1 https://github.com/example/example-repo.git \
+#   #   "$STORE_DIR/git/example-repo"
+# --------------------------------------------------------------------------
+
+# --------------------------------------------------------------------------
+# dist/ - zips, tarballs, and other direct-URL downloads (reserved for
+# future use).
+#
+# Pattern: the marker is the downloaded file itself; the download is skipped
+# while the file exists:
+#
+#   fetch_if_missing "$STORE_DIR/dist/<name>.zip" \
+#     curl -fsSL <url> -o "$STORE_DIR/dist/<name>.zip"
+#
+# Working example (uncomment and fill in when a direct-download artifact is
+# needed):
+#
+#   echo "==> direct downloads"
+#   # fetch_if_missing "$STORE_DIR/dist/example-1.0.0.zip" \
+#   #   curl -fsSL https://example.com/example-1.0.0.zip \
+#   #   -o "$STORE_DIR/dist/example-1.0.0.zip"
+# --------------------------------------------------------------------------
+
 echo ""
 echo "==> done: ${ADDED} added, ${SKIPPED} skipped - store at ${STORE_DIR}"
+echo "    sections: npm pip bin apt git dist"
