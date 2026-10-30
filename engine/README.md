@@ -118,6 +118,8 @@ lean-ctx ctx_knowledge recall --key "orchestration-contract" --mode exact
 ### Session Setup
 
 The engine runs with a single `session/` directory — no branches required. Initialize or refresh session state with:
+> **LOCAL-ONLY:** `session/`, `.session/` and everything inside them are runtime state — NEVER `git add`, commit, or push them (gitignored; history grows unbounded). Archive historical state logs to `.session/` instead.
+
 
 ```sh
 bash /opt/engine/scripts/snapshot-contract.sh          # Seed/refresh session/contract.json + state.md

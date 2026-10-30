@@ -1,1 +1,5 @@
 .idea/
+
+.session/
+session/*
+!session/state.example.md

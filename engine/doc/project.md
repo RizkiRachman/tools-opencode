@@ -59,7 +59,7 @@ The toolkit is organized as a **3-layer framework** of agents, skills, and contr
 
 - **`contract/` (contract templates)** -- `contract.template.json` is the template for per-session envelopes. Live state lives at `session/contract.json`, which persists state transitions, decisions, scoring results, token budgets, and audit logs. `contract.schema.json` is the canonical API schema. Cross-session memory lives in `ctx_knowledge` for durable pattern learning.
 
-- **Before-Commit Protocol** -- Every session runs: impact verify (`ctx_impact`) -> change detect (`ctx_delta`) -> knowledge persist (`ctx_knowledge remember`) -> graphify sync -> `session/state.md` update -> session save (all 6 systems).
+- **Before-Commit Protocol** -- Every session runs: impact verify (`ctx_impact`) -> change detect (`ctx_delta`) -> knowledge persist (`ctx_knowledge remember`) -> graphify sync -> `session/state.md` update -> session save (all 6 systems). `session/` and `.session/` are LOCAL-ONLY runtime state — never commit or push them.
 
 - **Doubt-Driven Development (DDD)** -- Non-trivial decisions get a fresh-context adversarial review before they stand. Used for correctness-critical, high-stakes, or unfamiliar-code decisions.
 

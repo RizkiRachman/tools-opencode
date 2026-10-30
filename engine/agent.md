@@ -300,6 +300,8 @@ Exceptions: docs-only changes skip 1, 2, 4. Config-only skip 1, 2.
 ### Save Session Protocol
 
 When the user says "save session" or a phase completes, save to **ALL** systems:
+> **LOCAL-ONLY:** `session/`, `.session/` and everything inside them are runtime state — NEVER `git add`, commit, or push them (gitignored; history grows unbounded). Archive historical state logs to `.session/` instead.
+
 
 ```bash
 # 1. Persist orchestration envelope to lean-ctx knowledge
@@ -338,6 +340,8 @@ lean-ctx ctx_session save
 ### Session Lifecycle Protocol
 
 Every orchestration session persists contract state to the `session/` directory for cross-session traceability and safe resumption.
+> **LOCAL-ONLY:** `session/`, `.session/` and everything inside them are runtime state — NEVER `git add`, commit, or push them (gitignored; history grows unbounded). Archive historical state logs to `.session/` instead.
+
 
 #### Directory Layout
 
@@ -345,7 +349,7 @@ Every orchestration session persists contract state to the `session/` directory 
 session/
 ├── contract.json         ← Live orchestration contract (single source of truth)
 ├── contract.schema.json  ← Schema for the contract
-├── state.md              ← Append-only chronological state log
+├── state.md              ← Append-only chronological state log (LOCAL-ONLY, gitignored)
 └── archive/              ← Timestamped snapshots (audit trail)
 ```
 

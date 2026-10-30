@@ -41,6 +41,8 @@ Every agent runs this protocol at session start, before any work:
 ## E2. Session Lifecycle
 
 Every orchestration session persists its contract state to the `session/` directory for cross-session traceability and safe resumption.
+> **LOCAL-ONLY:** `session/`, `.session/` and everything inside them are runtime state — NEVER `git add`, commit, or push them (gitignored; history grows unbounded). Archive historical state logs to `.session/` instead.
+
 
 ### Directory Layout
 
@@ -53,7 +55,7 @@ contract/                    ← Contract templates (immutable)
 session/                     ← Live state + historical archive
   contract.json              ← Current orchestration contract
   contract.schema.json       ← Contract schema
-  state.md                   ← Append-only log of ALL state transitions
+  state.md                   ← Append-only log of ALL state transitions (LOCAL-ONLY, gitignored)
 ```
 
 ### Lifecycle Protocol
