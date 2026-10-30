@@ -183,8 +183,8 @@ The engine source lives under `engine/` and is copied to `/opt/engine/` at conta
 engine/
 ├── agent.md           ← Orchestrator instructions (instructions[0])
 ├── AGENTS.md          ← lean-ctx code intelligence (loaded at session start)
-├── agents/            ← 15 agent instruction files (+ _governance.md)
-├── skills/            ← 50 skill directories
+├── agents/            ← 16 agent instruction files (+ _governance.md)
+├── skills/            ← 64 skill directories
 ├── contract/          ← Contract templates & schema (contract.template.json, contract.schema.json, state.template.md)
 ├── rules/             ← State machine transitions, scoring, cross-model review
 ├── usage/             ← Tool usage guides (lean-ctx, graphify, context7, opencode)
@@ -219,7 +219,7 @@ Orchestrator (tech-lead)
   └── @learner          → Post-execution learning
 ```
 
-**Cross-model review**: executors run on the executor model (`opencode/big-pickle`); reviewers (@product-manager, @software-architect, @quality-analyst, @security-engineer, @scrum-master) run on an independent reviewer model (`sumopod/deepseek-v4-flash`). Conflicting verdicts → `BLOCKED`, arbitrated by @council.
+**Cross-model review**: executors run on the executor model (`opencode/big-pickle`); reviewers (@product-manager, @software-architect, @quality-analyst, @security-engineer, @scrum-master) run on an independent reviewer model (`sumopod/deepseek-flash`). Conflicting verdicts → `BLOCKED`, arbitrated by @council.
 
 <p align="right">(<a href="#readme-top">back to top</a>)</p>
 

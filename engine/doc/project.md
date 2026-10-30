@@ -27,7 +27,7 @@
 | **Scoring Pipeline** | Three-tier: Rule-based checks (Tier 1) -> LLM-as-Judge (Tier 2) -> Combined Verdict of PASS / RETRY / BLOCKED (Tier 3) |
 | **Scoring Thresholds** | PASS >= 70, RETRY 50-69 (max 3 attempts), BLOCKED < 50 |
 | **15 Agent Types (scrum team)** | Orchestrator/lead (tech-lead), product (product-manager), process (scrum-master), planners (system-analyst, software-architect), implementers (developer, devops-engineer, fixer), reviewers (quality-analyst, security-engineer, learner), support (explorer, librarian, council, observer) |
-| **Cross-Model Review** | Executors run on `opencode/big-pickle`; reviewers run on an independent model (`sumopod/deepseek-v4-flash`). Conflicting verdicts → `BLOCKED`, arbitrated by `council` (`rules.json → enforcement.cross_model_review`) |
+| **Cross-Model Review** | Executors run on `opencode/big-pickle`; reviewers run on an independent model (`sumopod/deepseek-flash`). Conflicting verdicts → `BLOCKED`, arbitrated by `council` (`rules.json → enforcement.cross_model_review`) |
 | **50 Skill Directories** | Runnable skills including java-developer, system-analyst, writing-plans, spec-driven-development, test-driven-development, brainstorming, qa-expert, security-expert, devops-expert, and more |
 | **Cross-Session Learning** | Lessons, patterns, and gotchas persisted via `ctx_knowledge` -- survives session restarts and spans sessions |
 
@@ -53,7 +53,7 @@ Then connect to OpenCode (web UI on port 4096). The orchestrator (tech-lead agen
 
 The toolkit is organized as a **3-layer framework** of agents, skills, and contracts:
 
-- **`agents/` (15 agents)** -- Specialized instruction files defining role, state machine access, MCP permissions, and post-flight protocol. The tech-lead orchestrator leads a scrum team (product-manager, scrum-master, system-analyst, software-architect, developer, devops-engineer, fixer, quality-analyst, security-engineer, learner + support agents) in a spec-driven development (SDD) flow: Refine -> Plan -> Spec Gate -> Execute -> Review -> Process Gate -> Ship.
+- **`agents/` (16 agents)** -- Specialized instruction files defining role, state machine access, MCP permissions, and post-flight protocol. The tech-lead orchestrator leads a scrum team (product-manager, scrum-master, system-analyst, software-architect, developer, devops-engineer, fixer, quality-analyst, security-engineer, learner + support agents) in a spec-driven development (SDD) flow: Refine -> Plan -> Spec Gate -> Execute -> Review -> Process Gate -> Ship.
 
 - **`skills/` (50 directories)** -- Runnable skill libraries providing deep guidance per domain. Each skill directory contains a `SKILL.md` with workflows, conventions, and quality gates. Loaded on demand via `/skill` when a task matches the skill's domain.
 

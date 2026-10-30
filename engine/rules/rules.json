@@ -222,7 +222,7 @@
       "desc": "Per-phase model separation and independent (cross-model) review enforcement.",
       "model_tiers": {
         "executor": "opencode/big-pickle",
-        "reviewer": "sumopod/deepseek-v4-flash"
+        "reviewer": "sumopod/deepseek-flash"
       },
       "phase_assignment": {
         "INIT": { "owner": "product-manager", "tier": "reviewer" },

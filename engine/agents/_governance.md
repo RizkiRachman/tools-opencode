@@ -52,7 +52,7 @@ All agents read from it; write-capable agents update it with results.
 | `fixer` | subagent | EXECUTE | executor |
 | `learner` | subagent | REVIEW_SCORED, COMPLETE | executor |
 
-**Model tiers**: executor = `opencode/big-pickle`; reviewer = `sumopod/deepseek-v4-flash` (independent model); multi = both. Reviewers never share the executor's model — this is the basis of cross-model review (see `rules.json → enforcement.cross_model_review`).
+**Model tiers**: executor = `opencode/big-pickle`; reviewer = `sumopod/deepseek-flash` (independent model); multi = both. Reviewers never share the executor's model — this is the basis of cross-model review (see `rules.json → enforcement.cross_model_review`).
 
 ---
 ## 3. Session Lifecycle (Contract Archival)

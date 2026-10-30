@@ -25,8 +25,11 @@
         "apiKey": "{env:SUMOPOD_API_KEY}"
       },
       "models": {
-        "deepseek-v4-flash": {
-          "name": "DeepSeek V4 Flash"
+        "deepseek-flash": {
+          "name": "DeepSeek Flash"
+        },
+        "glm-5.3-flash": {
+          "name": "GLM 5.3 Flash"
         }
       }
     }
@@ -343,6 +346,139 @@
         "grep": "allow",
         "bash": "deny",
         "snip": "deny",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "ui-ux-tech-lead": {
+      "description": "UI/UX specialist orchestrator — enforces 4-layer design pipeline (Exemplar > Generator > Taste > Gate).",
+      "mode": "primary",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 4096,
+      "temperature": 0.2,
+      "top_p": 1,
+      "steps": 50,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "deny",
+        "grep": "deny",
+        "glob": "deny",
+        "list": "deny",
+        "write": "deny",
+        "webfetch": "deny",
+        "skill": "allow",
+        "task": {
+          "*": "allow"
+        },
+        "lean-ctx_*": "allow",
+        "context7_*": "allow",
+        "memory_*": "allow"
+      }
+    },
+    "product-manager": {
+      "description": "Owns requirements and the acceptance-criteria backlog. Turns user intent into testable Given-When-Then criteria. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/deepseek-flash",
+      "fallback_models": [],
+      "max_tokens": 8192,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 40,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "scrum-master": {
+      "description": "Process owner. Guards the contract, state machine, and workflow on every transition; unblocks BLOCKED sessions and drives retros. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/deepseek-flash",
+      "fallback_models": [],
+      "max_tokens": 4096,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 40,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "devops-engineer": {
+      "description": "Builds and validates CI/CD, containerization, deployment, migrations, observability, and rollback plans. Read/write within scope.",
+      "mode": "subagent",
+      "model": "sumopod/glm-5.3-flash",
+      "fallback_models": [],
+      "max_tokens": 12288,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 60,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "allow",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "allow",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
+        "lean-ctx_*": "allow"
+      }
+    },
+    "security-engineer": {
+      "description": "Independent security reviewer — threat modeling, vulnerability assessment, secrets/trust-boundary review. Cross-model reviewer. Read-only — no edits.",
+      "mode": "subagent",
+      "model": "sumopod/deepseek-flash",
+      "fallback_models": [],
+      "max_tokens": 8192,
+      "temperature": 0,
+      "top_p": 1,
+      "steps": 60,
+      "reasoningEffort": "high",
+      "textVerbosity": "low",
+      "permission": {
+        "bash": "deny",
+        "edit": "deny",
+        "read": "allow",
+        "grep": "allow",
+        "glob": "allow",
+        "list": "allow",
+        "write": "deny",
+        "webfetch": "deny",
+        "question": "deny",
+        "context7_*": "allow",
+        "memory_*": "allow",
         "lean-ctx_*": "allow"
       }
     }

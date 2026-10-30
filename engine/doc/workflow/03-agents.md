@@ -4,7 +4,7 @@
 
 > See [doc/workflow/README.md](../workflow/README.md) for index.
 
-This part maps all 15 agents (scrum team) to their contract states, MCPs, and skills. It also documents the toolkit data flow, agent pipeline, and cross-reference table for every concept in the orchestration system.
+This part maps all 16 agents (scrum team) to their contract states, MCPs, and skills. It also documents the toolkit data flow, agent pipeline, and cross-reference table for every concept in the orchestration system.
 
 ## C1. Full 15-Agent × 3-Dimension Table
 
@@ -96,7 +96,7 @@ This part maps all 15 agents (scrum team) to their contract states, MCPs, and sk
                         (guides loaded as needed)
 ```
 
-Executor model: `opencode/big-pickle` · Reviewer model: `sumopod/deepseek-v4-flash` · Arbitration: `council`.
+Executor model: `opencode/big-pickle` · Reviewer model: `sumopod/deepseek-flash` · Arbitration: `council`.
 
 The pipeline shows the hierarchy: `agent.md` is loaded by every agent at session start. Agents delegate down the pipeline (tech-lead → system-analyst → developer → quality-analyst), with usage guides loaded on demand by any agent.
 

@@ -35,7 +35,7 @@ OpenCode is configured at **`opencode.json`** in the project root. Key configura
 | Setting | Value | Notes |
 |---------|-------|-------|
 | Default agent | `tech-lead` | Primary orchestrator |
-| Model | executor `opencode/big-pickle` · reviewer `sumopod/deepseek-v4-flash` | Per-agent model assignment (cross-model review) |
+| Model | executor `opencode/big-pickle` · reviewer `sumopod/deepseek-flash` | Per-agent model assignment (cross-model review) |
 | Agents | 15 custom agents (tech-lead + 14 subagents) | Defined in `opencode.json` |
 | Format | JSON (not JSONC) | `opencode.json`, no comments |
 
@@ -77,7 +77,7 @@ Key sections in our `opencode.json`:
 
 | Section | What It Controls |
 |---------|-----------------|
-| `agent` | 15 agent definitions (permissions, model, temperature, steps) |
+| `agent` | 16 agent definitions (permissions, model, temperature, steps) |
 | `permission` | Global tool permissions (all `deny` except `lean-ctx_*` and `skill`) |
 | `provider` | Sumopod AI provider config with model options |
 | `compaction` | Auto context compaction with token budget |
@@ -141,7 +141,7 @@ Defined in `opencode.json` agent definitions + `.opencode/agents/*.md`:
 | **council** | subagent | multi | 30 | 0.2 | MCP-restricted |
 | **learner** | subagent | executor | 40 | 0 | MCP-restricted |
 
-**Cross-model review**: `executor` = `opencode/big-pickle`, `reviewer` = `sumopod/deepseek-v4-flash`, `multi` = council deliberates across both. Reviewers always run on a different model than the executor they audit.
+**Cross-model review**: `executor` = `opencode/big-pickle`, `reviewer` = `sumopod/deepseek-flash`, `multi` = council deliberates across both. Reviewers always run on a different model than the executor they audit.
 
 Key pattern: All agents are read-only at the native tool level (`read`, `edit`, `bash`, `grep` are `deny` globally). They work through MCP tools like `lean-ctx_*` which are globally `allow`.
 
@@ -150,7 +150,7 @@ Key pattern: All agents are read-only at the native tool level (`read`, `edit`, 
 | Option | Example | Purpose |
 |--------|---------|---------|
 | `mode` | `"primary"` / `"subagent"` | How the agent is invoked |
-| `model` | `"sumopod/deepseek-v4-flash"` | Override model for this agent |
+| `model` | `"sumopod/deepseek-flash"` | Override model for this agent |
 | `temperature` | `0` — `1.0` | Response determinism |
 | `steps` | `50` | Max agentic iterations before forced text response |
 | `permission` | `{ "edit": "deny" }` | Tool access control |

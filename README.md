@@ -52,8 +52,8 @@ cat > .env <<'ENV'
 OPENCODE_API_KEY=your-key
 SUMOPOD_API_KEY=your-key
 SUMOPOD_BASE_URL=https://ai.sumopod.com/v1
-SUMOPOD_BASE_MODEL=sumopod/deepseek-v4-flash
-SUMOPOD_BASE_MODEL_NAME=deepseek-v4-flash
+SUMOPOD_BASE_MODEL=sumopod/glm-5.3-flash
+SUMOPOD_BASE_MODEL_NAME=glm-5.3-flash
 CONTEXT7_API_KEY=your-key
 ENV
 
@@ -127,7 +127,7 @@ opencode/
 │   └── opencode-model-fallback.json
 ├── engine/                        # workflow-state-engine → /opt/engine in image
 │   ├── agents/                    # 16 scrum-team agent definitions
-│   ├── skills/                    # 65+ skills (incl. full UI/UX pipeline: design-exemplar, ui-ux-pro-max, impeccable)
+│   ├── skills/                    # 64 skills (incl. full UI/UX pipeline: design-exemplar, ui-ux-pro-max, impeccable)
 │   └── commands/                  # slash commands
 └── session/                       # orchestration state (contract.json, archive/)
 ```

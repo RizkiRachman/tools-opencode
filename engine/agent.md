@@ -67,7 +67,7 @@ INIT → PLAN → PLAN_SCORED → EXECUTE → EXECUTE_SCORED → REVIEW → REVI
 
 ```
 agents/     → 16 agent instruction files (tech-lead, product-manager, scrum-master, developer, devops-engineer, quality-analyst, security-engineer, …)
-skills/     → 50 skill directories (system-analyst, writing-plans, spec-driven-development, …)
+skills/     → 64 skill directories (system-analyst, writing-plans, spec-driven-development, …)
 contract/   → contract.template.json, contract.schema.json, state.template.md
 rules/      → rules.json (state machine transitions, scoring thresholds, cross-model review)
 doc/        → workflow guides, project.md, gap analysis, reports
@@ -89,7 +89,7 @@ The engine ships inside the container image (`COPY engine/ /opt/engine/`) and is
    ├── opencode.json → (bind-mounted) config/opencode.json
    ├── agent.md   → /opt/engine/agent.md      (instructions[0])
    ├── /opt/engine/agents/    → /opt/engine/agents/        16 agent instruction files
-   ├── /opt/engine/skills/    → /opt/engine/skills/        50 skill directories
+   ├── /opt/engine/skills/    → /opt/engine/skills/        64 skill directories
    ├── /opt/engine/rules/     → /opt/engine/rules/         rules.json (state machine)
    ├── /opt/engine/contract/  → /opt/engine/contract/      contract.template.json, contract.schema.json, state.template.md
    ├── /opt/engine/usage/     → /opt/engine/usage/         4 tool usage guides
@@ -109,7 +109,7 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 ├── /opt/engine/agents/            ← 16 agent instruction files (+ _governance.md)
 ├── /opt/engine/doc/               ← Workflow guides, project.md, reports
 ├── /opt/engine/rules/             ← rules.json (state machine, scoring, cross-model review)
-├── /opt/engine/skills/            ← 50 skill directories
+├── /opt/engine/skills/            ← 64 skill directories
 ├── /opt/engine/contract/          ← contract.template.json, contract.schema.json, state.template.md
 ├── /opt/engine/usage/             ← 4 tool usage guides
 └── /opt/engine/scripts/           ← Automation & validation scripts
@@ -123,7 +123,7 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 
 > Full agent instruction files at `/opt/engine/agents/` (symlinked into the OpenCode config dir). Each file defines role, MCPs, skills, and post-flight protocol.
 >
-> **Model tiers**: `executor` = `opencode/big-pickle`; `reviewer` = `sumopod/deepseek-v4-flash` (independent model). Reviewers never share the executor's model — this is the basis of **cross-model review**.
+> **Model tiers**: `executor` = `opencode/big-pickle`; `reviewer` = `sumopod/deepseek-flash` (independent model). Reviewers never share the executor's model — this is the basis of **cross-model review**.
 
 ### Orchestrator
 
@@ -152,7 +152,7 @@ The `engine/` source mirrors the runtime layout — edit here, rebuild to deploy
 
 | Agent | Role | Key MCPs | Access | Contract States | Model | Skills | File |
 |-------|------|----------|--------|----------------|-------|--------|------|
-| **quality-analyst** | Independent quality review (5-axis: correctness, readability, architecture, security, performance) | lean-ctx, postgres | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | qa-expert, security-expert, code-review-and-quality, impeccable | `/opt/engine/agents/quality-analyst.md` |
+| **quality-analyst** | Independent quality review (5-axis: correctness, readability, architecture, security, performance) | lean-ctx | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | qa-expert, security-expert, code-review-and-quality, impeccable | `/opt/engine/agents/quality-analyst.md` |
 | **security-engineer** | Independent security review — threat model, vulns, secrets, trust boundaries | lean-ctx | Read-only | `REVIEW`, `REVIEW_SCORED` | reviewer | security-expert, code-review-and-quality | `/opt/engine/agents/security-engineer.md` |
 | **scrum-master** | Process owner — guards the contract, state machine, and workflow; unblocks BLOCKED, DoD gate | lean-ctx, graphify | Read-only | `*` (all), `BLOCKED` | reviewer | orchestration-template, audit-observability, adaptive-solver | `/opt/engine/agents/scrum-master.md` |
 | **learner** | Post-execution retro — extract lessons, gotchas, patterns | lean-ctx | Read-only | `REVIEW_SCORED`, `COMPLETE` | executor | verification-before-completion | `/opt/engine/agents/learner.md` |
@@ -385,7 +385,7 @@ See [orchestration-template skill](/opt/engine/skills/orchestration-template/SKI
 - **Never commit secrets, credentials, tokens, `.env` files**
 
 ### Cross-Model Review
-- **Reviewers must run on a different model than the executor** they audit — executor `opencode/big-pickle` vs reviewer `sumopod/deepseek-v4-flash`
+- **Reviewers must run on a different model than the executor** they audit — executor `opencode/big-pickle` vs reviewer `sumopod/deepseek-flash`
 - **Conflicting reviewer verdicts** (PASS vs BLOCK) → `BLOCKED`, arbitrated by `@council` (see `rules.json → enforcement.cross_model_review`)
 - **Security-sensitive changes** (auth, secrets, credentials, config, crypto) auto-require `@security-engineer` review
 
@@ -469,7 +469,15 @@ All skills at `/opt/engine/skills/` (symlinked into the OpenCode config dir). Us
 | `slides` | Strategic HTML presentations with Chart.js, design tokens, responsive layouts (companion of ui-ux-pro-max) |
 | `ui-styling` | shadcn/ui + Tailwind + canvas-based UI styling, accessible components, theming (companion of ui-ux-pro-max) |
 | `awesome-readme` | README/docs standard — badges, TOC, quick start, config tables, architecture notes (distilled from matiassingers/awesome-readme) |
-| `lean-ctx-{exploring,impact,debug,refactor,cli,guide}` | lean-ctx-specific workflows |
+| `awesome-pr` | Pull request authoring — Conventional Commit titles, description template, review checklist, small-PR sizing |
+| `commit` | Conventional commits, atomic commits, commit message best practices |
+| `gradle-test-runner` | Gradle test execution, filtering, parallel runs, test configuration |
+| `ralph-coverage` | Ralph coverage analysis, test gap detection, coverage insights |
+| `rebase-commit` | Interactive rebase, squash, commit cleanup, history management |
+| `restart-spring-boot` | Spring Boot restart and hot-reload patterns for development |
+| `shipping-and-launch` | End-to-end release orchestration — pre-launch verification, canary rollout, rollback planning, post-deploy smoke tests |
+| `spec` | Specification writing, requirements documentation, acceptance criteria |
+| `lean-ctx` | LeanCTX Context Gateway — select task-relevant context, apply controls, reuse local knowledge, inspect recorded evidence |
 
 *Last updated: 2026-10-30. If you modify conventions, workflows, or config, update this file.*
 
