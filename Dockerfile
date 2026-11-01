@@ -18,7 +18,7 @@ RUN --mount=type=cache,target=/var/cache/apt,sharing=locked \
     --mount=type=cache,target=/var/lib/apt,sharing=locked \
     --mount=from=preinstall,src=/,dst=/pi,ro \
     set -eux; \
-    [ -n "$(ls /pi/apt/*.deb 2>/dev/null)" ] && dpkg -i /pi/apt/*.deb || true; \
+    cp /pi/apt/*.deb /var/cache/apt/archives/ 2>/dev/null || true; \
     apt-get update; \
     apt-get install -y --no-install-recommends \
       git \
