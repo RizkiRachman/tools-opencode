@@ -277,7 +277,7 @@ system-analyst (planning)
     ├── 4. Populate contract.outputs.plan
     └── 5. Persist: lean-ctx ctx_knowledge remember key orchestration-contract ...
 
-tech-lead (scoring)
+orchestrator (scoring)
     │
     └── 6. Score plan (≥70 → EXECUTE, <70 → revise)
 

@@ -144,7 +144,7 @@ ctx_impact({target: "changedSymbol", direction: "upstream"})
 | LOW (0-5 total affected symbols) | PASS — proceed |
 | MEDIUM (6-20 symbols or 2+ processes) | FLAG — review affected processes, verify tests cover them |
 | HIGH (21-50 symbols or cross-module) | FLAG + require human review before merge |
-| CRITICAL (50+ symbols, multiple modules, shared infra) | BLOCK — escalate to tech-lead |
+| CRITICAL (50+ symbols, multiple modules, shared infra) | BLOCK — escalate to orchestrator |
 
 **False positives**:
 - Impact shows 100 callers but 95 are in generated code (mappers/lombok) — check `kind` filter
@@ -225,7 +225,7 @@ lean-ctx ctx_knowledge remember key "pattern/your-pattern" value "..." category 
 | Tests pass, coverage < 60% on new code | BLOCK | Add coverage before proceeding |
 | Any ArchUnit violation | BLOCK | Fix layering violation |
 | `mvn verify` fails any gate | BLOCK | Fix failure |
-| Impact shows HIGH/CRITICAL risk | BLOCK | Escalate to tech-lead |
+| Impact shows HIGH/CRITICAL risk | BLOCK | Escalate to orchestrator |
 | Impact shows MEDIUM risk | FLAG | Review affected processes |
 | STATE.md not updated | FLAG | Update before merging |
 | Gotcha discovered, not persisted | FLAG | Persist before session end |

@@ -14,10 +14,10 @@ The orchestration contract is the shared JSON envelope that tracks every task fr
 | Phase | Reads from Contract | Activity | Writes to Contract | Delegated To |
 |---|---|---|---|---|
 | INIT→PLAN | requirements.*, governance.*, retry.issues[] | Refine requirements + system design & plan | state: PLAN, session.*, scope.* | product-manager → system-analyst |
-| PLAN→PLAN_SCORED | outputs.plan, scope.* | Score plan (+ SDD spec) | state: PLAN_SCORED, score.*, decisions.* | tech-lead (+ software-architect) |
-| EXECUTE→EXECUTE_SCORED | outputs.code_changes[], outputs.test_results | Score implementation | state: EXECUTE_SCORED, score.* | tech-lead |
+| PLAN→PLAN_SCORED | outputs.plan, scope.* | Score plan (+ SDD spec) | state: PLAN_SCORED, score.*, decisions.* | orchestrator (+ software-architect) |
+| EXECUTE→EXECUTE_SCORED | outputs.code_changes[], outputs.test_results | Score implementation | state: EXECUTE_SCORED, score.* | orchestrator |
 | EXECUTE_SCORED→REVIEW | score.*, outputs.* | Code quality + security review | state: REVIEW | quality-analyst + security-engineer |
-| REVIEW→REVIEW_SCORED | outputs.agent_reports[] | Score review findings | state: REVIEW_SCORED, score.*, outputs.score_summary | tech-lead |
+| REVIEW→REVIEW_SCORED | outputs.agent_reports[] | Score review findings | state: REVIEW_SCORED, score.*, outputs.score_summary | orchestrator |
 | REVIEW_SCORED→COMPLETE | score.*, outputs.* | Ship, learn, persist (scrum-master DoD gate) | state: COMPLETE, lessons_learned[], metrics.* | learner |
 | At BLOCKED | retry.issues[], retry.cur_phase | Escalate, arbitrate, persist | state: BLOCKED, retry.escalation_trace[], retry.attempt+1 | scrum-master |
 

@@ -357,5 +357,5 @@ After analysis, update knowledge artifacts:
    - Key: `lessons-learned-<task_id>`
    - Value: JSON of lessons, gotchas, and improvement suggestions
 2. **Knowledge updates**: Return `knowledge_updates[]` as an array of `{action, key, category, value}` objects
-   - These will be applied by the orchestrator in `agents/tech-lead.md` section 7
+   - These will be applied by the orchestrator in `agents/orchestrator.md` section 7
 3. **Deduplication**: Skip lessons already present in `contract.lessons_learned[]`

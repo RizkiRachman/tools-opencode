@@ -1,6 +1,6 @@
 ---
 name: shipping-and-launch
-description: End-to-end release orchestration — pre-launch verification, canary rollout, rollback planning, post-deploy smoke tests, and stakeholder communication. Invoked by the tech-lead orchestrator when contract.state transitions to EXECUTE_SCORED → REVIEW, and feeds into COMPLETE.
+description: End-to-end release orchestration — pre-launch verification, canary rollout, rollback planning, post-deploy smoke tests, and stakeholder communication. Invoked by the orchestrator orchestrator when contract.state transitions to EXECUTE_SCORED → REVIEW, and feeds into COMPLETE.
 ---
 
 # Shipping & Launch
@@ -284,7 +284,7 @@ Notify these channels at each stage:
 
 ## 6. Orchestration Integration — COMPLETE State Handoff
 
-This skill feeds into the tech-lead orchestrator's final state transition. When all launch steps are done, update the orchestration contract:
+This skill feeds into the orchestrator orchestrator's final state transition. When all launch steps are done, update the orchestration contract:
 
 ### Envelope Updates for COMPLETE Transition
 
@@ -330,4 +330,4 @@ The **learner** agent picks up from COMPLETE — it extracts lessons, gotchas, a
 
 ---
 
-*Last updated: 2026-06-16. Designed for the tech-lead orchestrator's EXECUTE_SCORED → REVIEW → COMPLETE pipeline. Works with `contract.json` state machine, `quality-analyst` review output, and `learner` post-release learning.*
+*Last updated: 2026-06-16. Designed for the orchestrator orchestrator's EXECUTE_SCORED → REVIEW → COMPLETE pipeline. Works with `contract.json` state machine, `quality-analyst` review output, and `learner` post-release learning.*

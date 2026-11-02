@@ -28,7 +28,7 @@ Options:
 Examples:
   $(basename "$0") --agent system-analyst --contract contract.json
   $(basename "$0") --agent developer --state EXECUTE
-  $(basename "$0") --agent tech-lead --contract-dir session/my-session
+  $(basename "$0") --agent orchestrator --contract-dir session/my-session
   $(basename "$0") --agent developer --contract-dir session --blast-radius HIGH
 EOF
   exit 0

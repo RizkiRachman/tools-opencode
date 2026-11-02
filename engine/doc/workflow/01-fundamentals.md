@@ -91,15 +91,15 @@ The envelope is stored in lean-ctx knowledge as `orchestration-contract`. File: 
 
 The contract is the single source of truth. Every delegation starts by reading the contract (lean-ctx ctx_knowledge recall). Every delegation ends by writing back (lean-ctx ctx_knowledge remember). This read→activity→write cycle is mandatory for every phase.
 
-**Pre-flight enforcement**: Before any work begins, the delegating agent (tech-lead) loads the contract via `lean-ctx ctx_knowledge recall --key "orchestration-contract" --mode "exact"`. If found → extract decisions.*, governance.*, retry.issues[]. If not found → create fresh from contract.template.json. This ensures crash recovery and cross-session resumption.
+**Pre-flight enforcement**: Before any work begins, the delegating agent (orchestrator) loads the contract via `lean-ctx ctx_knowledge recall --key "orchestration-contract" --mode "exact"`. If found → extract decisions.*, governance.*, retry.issues[]. If not found → create fresh from contract.template.json. This ensures crash recovery and cross-session resumption.
 
 | Phase | Reads from Contract | Activity | Writes to Contract | Delegated To |
 |---|---|---|---|---|
 | INIT→PLAN | requirements.*, governance.*, retry.issues[] | Refine requirements + system design & plan | state: PLAN, session.*, scope.* | product-manager → system-analyst |
-| PLAN→PLAN_SCORED | outputs.plan, scope.* | Score plan (+ SDD spec) | state: PLAN_SCORED, score.*, decisions.* | tech-lead (+ software-architect) |
-| EXECUTE→EXECUTE_SCORED | outputs.code_changes[], outputs.test_results | Score implementation | state: EXECUTE_SCORED, score.* | tech-lead |
+| PLAN→PLAN_SCORED | outputs.plan, scope.* | Score plan (+ SDD spec) | state: PLAN_SCORED, score.*, decisions.* | orchestrator (+ software-architect) |
+| EXECUTE→EXECUTE_SCORED | outputs.code_changes[], outputs.test_results | Score implementation | state: EXECUTE_SCORED, score.* | orchestrator |
 | EXECUTE_SCORED→REVIEW | score.*, outputs.* | Code quality + security review | state: REVIEW | quality-analyst + security-engineer |
-| REVIEW→REVIEW_SCORED | outputs.agent_reports[] | Score review findings | state: REVIEW_SCORED, score.*, outputs.score_summary | tech-lead |
+| REVIEW→REVIEW_SCORED | outputs.agent_reports[] | Score review findings | state: REVIEW_SCORED, score.*, outputs.score_summary | orchestrator |
 | REVIEW_SCORED→COMPLETE | score.*, outputs.* | Ship, learn, persist (scrum-master DoD gate) | state: COMPLETE, lessons_learned[], metrics.* | learner |
 | At BLOCKED | retry.issues[], retry.cur_phase | Escalate, arbitrate, persist | state: BLOCKED, retry.escalation_trace[], retry.attempt+1 | scrum-master |
 

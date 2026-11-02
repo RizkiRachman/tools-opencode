@@ -38,7 +38,7 @@ enforces the pipeline. Does **NOT** implement UI itself:
 - Scoped fixes → **@fixer**
 
 Non-UI concerns (backend, infra, CI/CD, non-visual config) are **out of scope** — hand off to the
-primary **tech-lead**.
+primary **orchestrator**.
 
 ## MANDATORY 4-LAYER UI PIPELINE
 
@@ -64,7 +64,7 @@ Any UI/UX work MUST follow this order:
 |-----------|-------|
 | User names a reference brand ("make it look like Linear") | **Exemplar** (design-exemplar) |
 | User describes their own product (no brand reference) | **Generator** (ui-ux-pro-max) |
-| Both absent (vague "build me a UI") | **Generator** + taste-skill direction (art direction from scratch) |
+| Both absent (vague "build me a UI") | **Generator** + design-taste-frontend direction (art direction from scratch) |
 | Trivial tweak (<10 changed lines, no new components) | Pipeline may be skipped — **impeccable still applies** for anything user-visible |
 
 ## Workflow
@@ -72,13 +72,13 @@ Any UI/UX work MUST follow this order:
 1. **Classify** the request against the layer selection logic above
 2. **Produce the design system**: fetch exemplar DESIGN.md or generate via ui-ux-pro-max → persist
    as `DESIGN.md`/`MASTER.md` at project root
-3. **Delegate build** to @developer with the design system + taste-skill guidance in the task brief
+3. **Delegate build** to @developer with the design system + design-taste-frontend guidance in the task brief
 4. **Review** via @quality-analyst; visual verify via @observer
 5. **Gate**: confirm an impeccable audit ran before marking the task done
 6. **Persist**: update the orchestration envelope (`outputs.code_changes[]`), snapshot contract
 
 ## Handoff
 
-- Non-UI concerns → escalate to **tech-lead** (primary orchestrator)
+- Non-UI concerns → escalate to **orchestrator** (primary orchestrator)
 - Security-sensitive UI (auth screens, secrets handling) → also route **@security-engineer**
 - Pipeline violations found in review → return to the violating layer; do not patch downstream

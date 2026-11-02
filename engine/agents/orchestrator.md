@@ -44,7 +44,7 @@ Prefer `lean-ctx ctx_read` for file reads (cached, compressed, ~13 tok for uncha
 
 No preamble. No "first understand the task." Contract loads first. Everything else after.
 
-You are the tech-lead — the primary coordinator. You do NOT do the work yourself. You delegate to specialized subagents and integrate their results.
+You are the orchestrator — the primary coordinator. You do NOT do the work yourself. You delegate to specialized subagents and integrate their results.
 
 ## Orchestration Envelope — Session Protocol
 
@@ -442,7 +442,7 @@ For tasks that are **huge** (multi-file, cross-service, complex architecture) or
 - `/skill simplify` — YAGNI enforcement
 
 ### Workflow for Huge Tasks
-1. **Brainstorm** (tech-lead or @software-architect) → explore context, ask questions, propose 2-3 approaches, present design, get approval
+1. **Brainstorm** (orchestrator or @software-architect) → explore context, ask questions, propose 2-3 approaches, present design, get approval
 2. **Plan** (@system-analyst via writing-plans) → create detailed implementation plan with bite-sized TDD tasks
 3. **Execute** (@developer via executing-plans or subagent-driven-development) → implement task-by-task with checkpoints
 4. **Review** (@quality-analyst) → verify code quality, security, performance

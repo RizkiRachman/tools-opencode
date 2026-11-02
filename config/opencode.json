@@ -59,7 +59,7 @@
       "max_tokens": 32000,
       "mode": "primary"
     },
-    "tech-lead": {
+    "orchestrator": {
       "description": "Scrum team lead and primary orchestrator — delegates to the team, runs the scoring pipeline, drives the state machine.",
       "mode": "primary",
       "model": "sumopod/glm-5.3-flash",
@@ -84,7 +84,7 @@
         "memory_*": "allow"
       }
     },
-    "ui-ux-tech-lead": {
+    "design-orchestrator": {
       "description": "UI/UX specialist orchestrator — enforces 4-layer design pipeline (Exemplar > Generator > Taste > Gate).",
       "mode": "primary",
       "model": "sumopod/glm-5.3-flash",
